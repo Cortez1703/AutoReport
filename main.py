@@ -6,11 +6,7 @@ import matplotlib.dates as dates
 from matplotlib.backends.backend_pdf import PdfPages
 from Make_folder import make_folder
 
-conn = psycopg2.connect(dbname='ram_testing',
-                        user='ram',
-                        password='fuckingdatabase',
-                        host='192.168.6.157',
-                        port=5440)
+conn = 2
 cur = conn.cursor()
 
 # now_date_start = str(datetime.datetime.now().date()) + ' ' + '00:00:00.000000'

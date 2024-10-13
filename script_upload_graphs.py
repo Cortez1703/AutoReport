@@ -6,9 +6,9 @@ from aiogram import Bot
 from aiogram.types import FSInputFile
 
 
-group_id = -951886059
+group_id =1
 # Константы id бота и канала
-API_TOKEN = '7725614078:AAFv71izXkxQ5LKoB28Etrf7rMteYo0dw_I'
+API_TOKEN = ''
 CHANNEL_ID = 872965519  # это должен быть int, например -1006666666666
 bot = Bot(token=API_TOKEN)
 
