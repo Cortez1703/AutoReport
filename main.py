@@ -94,7 +94,6 @@ def Save_PDF_images_grabs():
         full_worktime = get_correct_timestamp("grab_attempt", "attempt_timestamp", ID)
         second_worktime = get_correct_timestamp("sorted_object", "sorted_timestamp", ID)
         pdf.savefig(make_graph(full_worktime, second_worktime))
-        print(ID)
 
     # Сохранение общего графика за сегодняшнюю дату
     full_worktime = get_correct_timestamp("grab_attempt", "attempt_timestamp")
