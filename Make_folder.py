@@ -13,7 +13,8 @@ def make_folder(level: bool = False):
     '''
     if level:
         if platform == "linux" or platform == "linux2":
-            print('pizdec')
+            if not os.path.exists('Reports'):
+                os.mkdir("Reports")
         elif platform == "win32":
             if not os.path.exists(path.abspath('') + fr'\Reports'):
                 os.mkdir(path.abspath('') + fr'\Reports')
@@ -21,7 +22,8 @@ def make_folder(level: bool = False):
             print('pizdec')
     else:
         if platform == "linux" or platform == "linux2":
-            print('pizdec')
+            if not os.path.exists(fr'Reports/{now_date}') and os.path.exists('Reports'):
+                os.mkdir(fr'Reports/{now_date}')
         elif platform == "win32":
             if not os.path.exists(path.abspath('') + fr'\Reports\{now_date}'):
                 os.mkdir(path.abspath('') + fr'\Reports\{now_date}')
@@ -29,4 +31,4 @@ def make_folder(level: bool = False):
             print('pizdec')
 
 
-make_folder(True)
+make_folder()

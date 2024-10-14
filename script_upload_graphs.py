@@ -1,15 +1,17 @@
 
 import datetime
 import asyncio
-
+import os
 from aiogram import Bot
 from aiogram.types import FSInputFile
+from setting import config
 
+settings = config()
 
 group_id =1
 # Константы id бота и канала
-API_TOKEN = ''
-CHANNEL_ID = 872965519  # это должен быть int, например -1006666666666
+API_TOKEN = settings.api_token_bot
+CHANNEL_ID = settings.id_my  # это должен быть int, например -1006666666666
 bot = Bot(token=API_TOKEN)
 
 # Переменная сегодняшней даты для формирования новой таблицы
@@ -24,8 +26,8 @@ async def sending(name_of_file:str):
 
 
 async def main():
-    task1 = asyncio.create_task(sending(fr"C:\Users\aleks\PycharmProjects\AutoGeneration\Reports\{now_date}\Графики_по_тестам"))
-    task2 = asyncio.create_task(sending(fr"C:\Users\aleks\PycharmProjects\AutoGeneration\Reports\{now_date}\Сводка"))
+    task1 = asyncio.create_task(sending(fr"{os.getcwd()}/Reports/{now_date}/Графики_по_тестам"))
+    task2 = asyncio.create_task(sending(fr"{os.getcwd()}/Reports/{now_date}/Сводка"))
 
     await task1
     await task2

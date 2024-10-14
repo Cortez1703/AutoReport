@@ -5,8 +5,16 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as dates
 from matplotlib.backends.backend_pdf import PdfPages
 from Make_folder import make_folder
+import os
+from setting import config
 
-conn = 2
+settings = config()
+conn = psycopg2.connect(dbname = settings.DB_CONFIG['dbname'],
+    user=settings.DB_CONFIG['user'],
+    password=settings.DB_CONFIG['password'],
+    host=settings.DB_CONFIG['host'],
+    port=settings.DB_CONFIG['port']
+)
 cur = conn.cursor()
 
 # now_date_start = str(datetime.datetime.now().date()) + ' ' + '00:00:00.000000'
@@ -20,8 +28,9 @@ now_date_end = '2024-10-11' + ' ' + '23:59:59.999999'
 now_date_end = datetime.datetime.strptime(now_date_end, '%Y-%m-%d %H:%M:%S.%f')
 
 now_date = datetime.date.today()
-pdf = PdfPages(fr"C:\Users\aleks\PycharmProjects\AutoGeneration\Reports\{now_date}\Графики_по_тестам_{now_date}.pdf")
-pdf2 = PdfPages(fr"C:\Users\aleks\PycharmProjects\AutoGeneration\Reports\{now_date}\Сводка_{now_date}.pdf")
+pdf = PdfPages(fr"{os.getcwd()}/Reports/{now_date}/Графики_по_тестам_{now_date}.pdf")
+pdf2 = PdfPages(fr"{os.getcwd()}/Reports/{now_date}/Сводка_{now_date}.pdf")
+
 
 
 def get_correct_timestamp(name_table: str, name_column: str, ID: int | None = None, date_start: str = now_date_start,
