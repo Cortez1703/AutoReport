@@ -2,4 +2,4 @@ Pipfile
 setting.py
 Pipfile
 test.py
-/Reports
+/Reports/*
