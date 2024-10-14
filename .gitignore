@@ -3,3 +3,5 @@ setting.py
 Pipfile
 test.py
 /Reports/*
+.idea
+__pycache__
