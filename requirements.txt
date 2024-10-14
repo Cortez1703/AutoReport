@@ -1,0 +1,4 @@
+matplotlib
+NumPy
+aiogram
+psycopg2-binary
