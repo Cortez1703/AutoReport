@@ -17,15 +17,13 @@ conn = psycopg2.connect(dbname = settings.DB_CONFIG['dbname'],
 )
 cur = conn.cursor()
 
-# now_date_start = str(datetime.datetime.now().date()) + ' ' + '00:00:00.000000'
-# now_date_start = datetime.datetime.strptime(now_date_start, '%Y-%m-%d %H:%M:%S.%f')
-# now_date_end = str(datetime.datetime.now().date()) + ' ' + '23:59:59.999999'
-# now_date_end = datetime.datetime.strptime(now_date_end, '%Y-%m-%d %H:%M:%S.%f')
 
-now_date_start = '2024-10-11' + ' ' + '09:00:00.000000'
+
+now_date_start = str(datetime.datetime.now().date()) + ' ' + '00:00:00.000000'
 now_date_start = datetime.datetime.strptime(now_date_start, '%Y-%m-%d %H:%M:%S.%f')
-now_date_end = '2024-10-11' + ' ' + '23:59:59.999999'
+now_date_end = str(datetime.datetime.now().date()) + ' ' + f'{datetime.datetime.now().time()}'
 now_date_end = datetime.datetime.strptime(now_date_end, '%Y-%m-%d %H:%M:%S.%f')
+
 
 now_date = datetime.date.today()
 pdf = PdfPages(fr"{os.getcwd()}/Reports/{now_date}/Графики_по_тестам_{now_date}.pdf")
@@ -53,10 +51,12 @@ def get_correct_timestamp(name_table: str, name_column: str, ID: int | None = No
                     WHERE {name_column}>'{date_start}' AND {name_column}<'{date_end}'""")
         first_timestamp = [str(i[0].time())[0:-7] for i in cur.fetchall()]
         correct_timestamp = [datetime.datetime.strptime(i, "%H:%M:%S") for i in first_timestamp]
+    
     return correct_timestamp
+    
 
 
-def make_graph(full_worktime: list, second_worktime: list):
+def make_graph(full_worktime: list, second_worktime: list,title:str):
     # Какой-то костыль, без которого не будет работать
     fmt = dates.DateFormatter('%H:%M:%S')
 
@@ -69,8 +69,8 @@ def make_graph(full_worktime: list, second_worktime: list):
     ax.plot(full_worktime, Y_full, "-o", label='Попыток захвата')
     ax.plot(second_worktime, Y_succesful_grab, "-o", label='Успешный захват')
 
-    ax.set_title(f'''Всего захватов {len(full_worktime)}, успешных захватов {len(second_worktime)}.
-                КПД {(len(second_worktime) / (len(full_worktime))) * 100:.2f}%''')
+    ax.set_title(f'''{title}\nВсего захватов {len(full_worktime)}, успешных захватов {len(second_worktime)}.КПД {(len(second_worktime) / (len(full_worktime)+1)) * 100:.2f}%''')
+    ax.title.set_fontsize(10)
     ax.legend()
     ax.grid(True)
     ax.xaxis.set_major_formatter(fmt)
@@ -79,7 +79,7 @@ def make_graph(full_worktime: list, second_worktime: list):
     return fig
 
 
-def Save_PDF_images_grabs():
+def Save_PDF_images_grabs(flag:int=0):
     """Функция создает PDF-файл с интересующими графиками
 
     Output:
@@ -93,13 +93,19 @@ def Save_PDF_images_grabs():
     for ID in test_id:
         full_worktime = get_correct_timestamp("grab_attempt", "attempt_timestamp", ID)
         second_worktime = get_correct_timestamp("sorted_object", "sorted_timestamp", ID)
-        pdf.savefig(make_graph(full_worktime, second_worktime))
+        if len(full_worktime)>0 or len(second_worktime)>0:
+            flag+=1
+        title = f'Статистика для опыта №{ID}'
+        pdf.savefig(make_graph(full_worktime, second_worktime,title))
 
     # Сохранение общего графика за сегодняшнюю дату
     full_worktime = get_correct_timestamp("grab_attempt", "attempt_timestamp")
     second_worktime = get_correct_timestamp("sorted_object", "sorted_timestamp")
-    pdf.savefig(make_graph(full_worktime, second_worktime))
+    title = 'Общая статистика'
+    pdf.savefig(make_graph(full_worktime, second_worktime,title))
     pdf.close()
+    if flag:
+        return flag
 
 
 def Save_PDF_images_grabs_gisto():
@@ -131,7 +137,7 @@ def Save_PDF_images_grabs_gisto():
     plt.step(x_succec, y_succel, label='Количество успешных попыток')
     plt.legend()
     plt.title(f"""Общее количество попыток {sum(y_full)}, количество успешных попыток {sum(y_succel)}.
-КПД {(sum(y_succel) / sum(y_full)) * 100:.2f}%""")
+КПД {(sum(y_succel) / (1+sum(y_full))) * 100:.2f}%""")
     plt.grid(True)
     plt.xlabel("Время в часах")
     plt.ylabel("V,предметы/час")
@@ -142,5 +148,5 @@ def Save_PDF_images_grabs_gisto():
 if __name__ == '__main__':
     make_folder(True)
     make_folder()
-    Save_PDF_images_grabs()
-    Save_PDF_images_grabs_gisto()
+    a=Save_PDF_images_grabs()
+    b=Save_PDF_images_grabs_gisto()
