@@ -71,7 +71,7 @@ def make_graph(full_worktime: list, second_worktime: list,title:str):
     # Отрисовка самих графиков
     ax.plot(full_worktime, Y_full, "-o", label='Попыток захвата')
     ax.plot(second_worktime, Y_succesful_grab, "-o", label='Успешный захват')
-    if len(full_worktime<1):
+    if len(full_worktime)<1:
         ax.set_title(f'''{title}\nВсего захватов {len(full_worktime)}, 
                      успешных захватов {len(second_worktime)}.КПД {(len(second_worktime) / (len(full_worktime)+1)) * 100:.2f}%''')
     else:
