@@ -8,6 +8,7 @@ from Make_folder import make_folder
 import os
 from setting import config
 
+
 settings = config()
 conn = psycopg2.connect(dbname = settings.DB_CONFIG['dbname'],
     user=settings.DB_CONFIG['user'],
@@ -125,26 +126,33 @@ def Save_PDF_images_grabs_gisto():
     # Сохранение общего графика за сегодняшнюю дату
     full_worktime = get_correct_timestamp("grab_attempt", "attempt_timestamp")
     second_worktime = get_correct_timestamp("sorted_object", "sorted_timestamp")
-    for i in range(9, 20):
+    for i in np.arange (9, 20):
         y_full_sum = 0
         y_succes_sum = 0
-        x_full.append(i)
-        x_succec.append(i)
-        for j in full_worktime:
+        for k in range(0,59):
+            x_full.append((i+(k/60)))
+            x_succec.append(i+(k/60))
+            y_succes_sum=0
+            y_full_sum=0
+            for j in full_worktime:
+                
+                if j > datetime.datetime.strptime(now_date_gisto+f"{i}:{k}:00",
+                                                "%Y-%m-%d %H:%M:%S") and j < datetime.datetime.strptime(now_date_gisto+f"{i}:{k+1}:00",
+                                                                                                "%Y-%m-%d %H:%M:%S"):
+                    print(datetime.datetime.strptime(now_date_gisto+f"{i}:{k}:00",
+                                                "%Y-%m-%d %H:%M:%S"))
+                    y_full_sum += 1
 
-            if j > datetime.datetime.strptime(now_date_gisto+f"{i}:00:00",
-                                              "%Y-%m-%d %H:%M:%S") and j < datetime.datetime.strptime(now_date_gisto+f"{i + 1}:00:00",
-                                                                                             "%Y-%m-%d %H:%M:%S"):
-                y_full_sum += 1
+            for j in second_worktime:
+                
 
-        for j in second_worktime:
+                if j > datetime.datetime.strptime(now_date_gisto+f"{i}:{k}:00",
+                                                "%Y-%m-%d %H:%M:%S") and j < datetime.datetime.strptime(now_date_gisto+f"{i}:{k+1}:00",
+                                                                                                "%Y-%m-%d %H:%M:%S"):
+                    y_succes_sum += 1
+            y_full.append(y_full_sum)
+            y_succel.append(y_succes_sum)
             
-            if j > datetime.datetime.strptime(now_date_gisto+f"{i}:00:00",
-                                              "%Y-%m-%d %H:%M:%S") and j < datetime.datetime.strptime(now_date_gisto+f"{i + 1}:00:00",
-                                                                                             "%Y-%m-%d %H:%M:%S"):
-                y_succes_sum += 1
-        y_full.append(y_full_sum)
-        y_succel.append(y_succes_sum)
     plt.step(x_full, y_full, label='Общее количество попыток')
     plt.step(x_succec, y_succel, label='Количество успешных попыток')
     plt.legend()
@@ -153,6 +161,7 @@ def Save_PDF_images_grabs_gisto():
     plt.grid(True)
     plt.xlabel("Время в часах")
     plt.ylabel("V,предметы/час")
+    plt.xlim(16.5,17)
     
     pdf2.savefig()
     pdf2.close()
