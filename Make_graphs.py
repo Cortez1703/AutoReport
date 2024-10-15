@@ -76,7 +76,8 @@ def make_graph(full_worktime: list, second_worktime: list,title:str):
     ax.legend()
     ax.grid(True)
     ax.xaxis.set_major_formatter(fmt)
-    ax.set_xlim(min(full_worktime[0],second_worktime[0]),max(full_worktime[-1],second_worktime[-1]))
+    if len(full_worktime)>0 and len(second_worktime)>0:
+        ax.set_xlim(min(full_worktime[0],second_worktime[0]),max(full_worktime[-1],second_worktime[-1]))
 
     fig.autofmt_xdate()
 
