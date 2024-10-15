@@ -52,7 +52,6 @@ if __name__ == '__main__':
     Make_graphs.make_folder(True)
     Make_graphs.make_folder()
     count_of_data=Make_graphs.Save_PDF_images_grabs()
-    print(count_of_data)
     Make_graphs.Save_PDF_images_grabs_gisto()
     if count_of_data:
         try:

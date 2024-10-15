@@ -19,7 +19,7 @@ cur = conn.cursor()
 
 
 
-now_date_start = str(datetime.datetime.now().date()) + ' ' + '00:00:00.000000'
+now_date_start = str(datetime.datetime.now().date()) + ' ' + '09:00:00.000000'
 now_date_start = datetime.datetime.strptime(now_date_start, '%Y-%m-%d %H:%M:%S.%f')
 now_date_end = str(datetime.datetime.now().date()) + ' ' + f'{datetime.datetime.now().time()}'
 now_date_end = datetime.datetime.strptime(now_date_end, '%Y-%m-%d %H:%M:%S.%f')
@@ -44,13 +44,15 @@ def get_correct_timestamp(name_table: str, name_column: str, ID: int | None = No
             f"""SELECT {name_column} FROM {name_table} 
             WHERE {name_column}>'{date_start}' AND {name_column}<'{date_end}' and test_id={ID}""")
         first_timestamp = [str(i[0].time())[0:-7] for i in cur.fetchall()]
-        correct_timestamp = [datetime.datetime.strptime(i, "%H:%M:%S") for i in first_timestamp]
+        first_timestamp = [str(now_date)+' ' + i for i in first_timestamp] 
+        correct_timestamp = [datetime.datetime.strptime(i, "%Y-%m-%d %H:%M:%S") for i in first_timestamp]
     else:
         cur.execute(
             f"""SELECT {name_column} FROM {name_table} 
                     WHERE {name_column}>'{date_start}' AND {name_column}<'{date_end}'""")
         first_timestamp = [str(i[0].time())[0:-7] for i in cur.fetchall()]
-        correct_timestamp = [datetime.datetime.strptime(i, "%H:%M:%S") for i in first_timestamp]
+        first_timestamp = [str(now_date)+' ' + i for i in first_timestamp] 
+        correct_timestamp = [datetime.datetime.strptime(i, "%Y-%m-%d %H:%M:%S") for i in first_timestamp]
     
     return correct_timestamp
     
@@ -74,6 +76,8 @@ def make_graph(full_worktime: list, second_worktime: list,title:str):
     ax.legend()
     ax.grid(True)
     ax.xaxis.set_major_formatter(fmt)
+    ax.set_xlim(min(full_worktime[0],second_worktime[0]),max(full_worktime[-1],second_worktime[-1]))
+
     fig.autofmt_xdate()
 
     return fig
