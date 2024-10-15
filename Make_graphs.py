@@ -26,6 +26,7 @@ now_date_end = datetime.datetime.strptime(now_date_end, '%Y-%m-%d %H:%M:%S.%f')
 
 
 now_date = datetime.date.today()
+now_date_gisto = str(now_date)+" "
 pdf = PdfPages(fr"{os.getcwd()}/Reports/{now_date}/Графики_по_тестам_{now_date}.pdf")
 pdf2 = PdfPages(fr"{os.getcwd()}/Reports/{now_date}/Сводка_{now_date}.pdf")
 
@@ -128,13 +129,17 @@ def Save_PDF_images_grabs_gisto():
         x_full.append(i)
         x_succec.append(i)
         for j in full_worktime:
-            if j > datetime.datetime.strptime(f"{i}:00:00",
-                                              "%H:%M:%S") and j < datetime.datetime.strptime(f"{i + 1}:00:00",
-                                                                                             "%H:%M:%S"):
+
+            if j > datetime.datetime.strptime(now_date_gisto+f"{i}:00:00",
+                                              "%Y-%m-%d %H:%M:%S") and j < datetime.datetime.strptime(now_date_gisto+f"{i + 1}:00:00",
+                                                                                             "%Y-%m-%d %H:%M:%S"):
                 y_full_sum += 1
+
         for j in second_worktime:
-            if j > datetime.datetime.strptime(f"{i}:00:00", "%H:%M:%S") and j < datetime.datetime.strptime(
-                    f"{i + 1}:00:00", "%H:%M:%S"):
+            
+            if j > datetime.datetime.strptime(now_date_gisto+f"{i}:00:00",
+                                              "%Y-%m-%d %H:%M:%S") and j < datetime.datetime.strptime(now_date_gisto+f"{i + 1}:00:00",
+                                                                                             "%Y-%m-%d %H:%M:%S"):
                 y_succes_sum += 1
         y_full.append(y_full_sum)
         y_succel.append(y_succes_sum)
@@ -146,6 +151,7 @@ def Save_PDF_images_grabs_gisto():
     plt.grid(True)
     plt.xlabel("Время в часах")
     plt.ylabel("V,предметы/час")
+    
     pdf2.savefig()
     pdf2.close()
 
