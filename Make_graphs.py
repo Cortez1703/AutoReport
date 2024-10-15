@@ -95,7 +95,7 @@ def Save_PDF_images_grabs(flag:int=0):
     test_id = [i[0] for i in set(cur.fetchall()) if bool(i[0]) == True]
 
     # Парсинг данных по разным тестам робота (каждый запуск = новая порция датки)
-    for ID in test_id:
+    for ID in sorted(test_id):
         full_worktime = get_correct_timestamp("grab_attempt", "attempt_timestamp", ID)
         second_worktime = get_correct_timestamp("sorted_object", "sorted_timestamp", ID)
         if len(full_worktime)>0 or len(second_worktime)>0:
