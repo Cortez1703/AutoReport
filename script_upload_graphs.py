@@ -13,7 +13,7 @@ settings = config()
 group_id =1
 # Константы id бота и канала
 API_TOKEN = settings.api_token_bot
-CHANNEL_ID = settings.id_my  # это должен быть int, например -1006666666666
+CHANNEL_ID = settings.group_id  # это должен быть int, например -1006666666666
 bot = Bot(token=API_TOKEN)
 
 # Переменная сегодняшней даты для формирования новой таблицы
