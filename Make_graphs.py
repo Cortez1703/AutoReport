@@ -8,6 +8,7 @@ import os
 from setting import config
 from DB_connection import make_connection
 from verify_breaks import get_breaks
+from statistics import mean
 
 #list_of_breaks = get_breaks()
 conn,cur=make_connection()
@@ -232,7 +233,6 @@ def Save_PDF_images_grabs_gisto(time_step:int=1):
     
     full_worktime = get_current_time("grab_attempt", "attempt_timestamp")
     second_worktime = get_current_time("sorted_object", "sorted_timestamp")
-    print(full_worktime)
     for i in np.arange (9, 20):
         y_full_sum = 0
         y_succes_sum = 0
@@ -248,7 +248,7 @@ def Save_PDF_images_grabs_gisto(time_step:int=1):
                                                                                                 "%Y-%m-%d %H:%M:%S"):
                 
                     y_full_sum += 1
-
+                    
             for j in second_worktime:
                 
 
@@ -258,15 +258,21 @@ def Save_PDF_images_grabs_gisto(time_step:int=1):
                     y_succes_sum += 1
             y_full.append(y_full_sum)
             y_succel.append(y_succes_sum)
-            
+    plt.rcParams["figure.figsize"] = (25,15)
     plt.step(x_full, y_full, label='Общее количество попыток')
     plt.step(x_succec, y_succel, label='Количество успешных попыток')
+    while 0 in y_full:
+        y_full.remove(0)
+    plt.step([x_full[0],x_full[-1]],[mean(y_full),mean(y_full)],'--',label='Средняя скорость попыток захвата',color='b')
+    while 0 in y_succel:
+        y_succel.remove(0)
+    plt.step([x_succec[0],x_succec[-1]],[mean(y_succel),mean(y_succel)],'--',label='Средняя скорость успешных попыток захвата',color='orange')
     plt.legend()
     plt.title(f"""Общее количество попыток {sum(y_full)}, количество успешных попыток {sum(y_succel)}.
 КПД {(sum(y_succel) / (1+sum(y_full))) * 100:.2f}%""")
     plt.grid(True)
     plt.xlabel("Время в часах")
-    plt.ylabel("V,предметы/час")
+    plt.ylabel("V,предметы/минута")
     plt.xlim(9,21)
     
     pdf2.savefig()
