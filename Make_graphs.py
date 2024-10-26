@@ -179,11 +179,21 @@ def Save_PDF_images_gisto():
 
     # Экземпляры фигуры и графика
     ax = fig.add_subplot(2,1,1)
-
+    cur.execute(f"""SELECT name_break,date_of_create_break,date_of_repair_break from breaks 
+                    WHERE date_of_create_break<'{now_date_end}' AND date_of_create_break>'{now_date_start}'""")
+    text = ''
+    for i in cur.fetchall():
+        timedelta = i[2]-i[1]
+        text+=f'{i[0]}, время ремонта:{timedelta.days*8 + timedelta.seconds//3600}ч,{(timedelta.seconds%3600)//60}м,{(timedelta.seconds%3600)%60}с\n'
     # Отрисовка самих графиков
     ax.plot(x_label, y_label,'-.',color='g',label='Попыток захвата',markersize=1)
     ax.plot(x_label_2, y_label_2, "--", color='r',label='Успешный захват')
     ax.plot([now_date_start,now_date_end], [0,0],'-.',color='black',markersize=1)
+    if text:
+        ax.text(x_label[0],y_label[int(len(y_label)*0.8)],f'{text}',style ='italic', 
+        fontsize = 10, 
+        bbox ={'facecolor':'green', 
+               'alpha':0.6, 'pad':2})
     if len(y_label)<1:
         ax.set_title(f'''{title}\nВсего захватов {len(y_label)},успешных захватов {len(y_label_2)}.КПД {(len(y_label_2) / (len(y_label)+1)) * 100:.2f}%''')
     else:
