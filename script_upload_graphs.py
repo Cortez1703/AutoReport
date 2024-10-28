@@ -44,6 +44,8 @@ async def send_message(name_of_file:str,channel_id: int,flag1:int=1,flag:int=1):
     else:
         if not bool(ans):
             await bot.send_message(channel_id,f'''#Отчет_за_{now_date_tag}\nРобот не работал до нынешнего момента''')
+        else:
+            await bot.send_message(channel_id,f'''#Отчет_за_{now_date_tag}\nРобот не работал до нынешнего момента\nВот какие проблемы не решены\n{ans}''')
 
 async def sending(name_of_file:str,chat_id,flag1:int=1,flag:int=1):
     await send_message(name_of_file,chat_id,flag1,flag)
@@ -57,7 +59,6 @@ async def main(flag:bool=True,chat_id:int=my_id):
         await task1
         await task2
     else:
-        
         task1 = asyncio.create_task(sending('pupa',chat_id,flag1=0))
         await task1
 
@@ -69,7 +70,6 @@ if __name__ == '__main__':
     if count_of_data:
         try:
             asyncio.run(main())
-
         except Exception as e:
             print(e)
     else:

@@ -22,9 +22,9 @@ now_date_end = datetime.datetime.strptime(now_date_end, '%Y-%m-%d %H:%M:%S.%f')
 
 
 
-#now_date_start = '2024-10-15' + ' ' + '09:00:00.000000'
+#now_date_start = '2024-10-27' + ' ' + '09:00:00.000000'
 #now_date_start = datetime.datetime.strptime(now_date_start, '%Y-%m-%d %H:%M:%S.%f')
-#now_date_end = '2024-10-15' + ' ' + '21:00:00.000000'
+#now_date_end = '2024-10-27' + ' ' + '21:00:00.000000'
 #now_date_end = datetime.datetime.strptime(now_date_end, '%Y-%m-%d %H:%M:%S.%f')
 
 now_date = datetime.date.today()
@@ -190,6 +190,7 @@ def Save_PDF_images_gisto():
     ax.plot(x_label_2, y_label_2, "--", color='r',label='Успешный захват')
     ax.plot([now_date_start,now_date_end], [0,0],'-.',color='black',markersize=1)
     if text:
+        text=f'Поломки за {now_date}\n\n'+text
         ax.text(x_label[0],y_label[int(len(y_label)*0.8)],f'{text}',style ='italic', 
         fontsize = 10, 
         bbox ={'facecolor':'green', 
@@ -231,6 +232,8 @@ def Save_PDF_images_grabs(flag:int=0):
     pdf.close()
     if flag:
         return flag
+    else:
+        return None
 
 
 def Save_PDF_images_grabs_gisto(time_step:int=1):
@@ -273,10 +276,12 @@ def Save_PDF_images_grabs_gisto(time_step:int=1):
     plt.step(x_succec, y_succel, label='Количество успешных попыток')
     while 0 in y_full:
         y_full.remove(0)
-    plt.step([x_full[0],x_full[-1]],[mean(y_full),mean(y_full)],'--',label='Средняя скорость попыток захвата',color='b')
+    if len(x_full) and len(y_full):
+        plt.step([x_full[0],x_full[-1]],[mean(y_full),mean(y_full)],'--',label='Средняя скорость попыток захвата',color='b')
     while 0 in y_succel:
         y_succel.remove(0)
-    plt.step([x_succec[0],x_succec[-1]],[mean(y_succel),mean(y_succel)],'--',label='Средняя скорость успешных попыток захвата',color='orange')
+    if len(x_succec) and len(y_succel):    
+        plt.step([x_succec[0],x_succec[-1]],[mean(y_succel),mean(y_succel)],'--',label='Средняя скорость успешных попыток захвата',color='orange')
     plt.legend()
     plt.title(f"""Общее количество попыток {sum(y_full)}, количество успешных попыток {sum(y_succel)}.
 КПД {(sum(y_succel) / (1+sum(y_full))) * 100:.2f}%""")
