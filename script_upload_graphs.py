@@ -45,7 +45,7 @@ async def send_message(name_of_file:str,channel_id: int,flag1:int=1,flag:int=1):
         if not bool(ans):
             await bot.send_message(channel_id,f'''#Отчет_за_{now_date_tag}\nРобот не работал до нынешнего момента''')
         else:
-            await bot.send_message(channel_id,f'''#Отчет_за_{now_date_tag}\nРобот не работал до нынешнего момента\nВот какие проблемы не решены\n{ans}''')
+            await bot.send_message(channel_id,f'''#Отчет_за_{now_date_tag}\nРобот не работал до нынешнего момента\n{ans}''')
 
 async def sending(name_of_file:str,chat_id,flag1:int=1,flag:int=1):
     await send_message(name_of_file,chat_id,flag1,flag)

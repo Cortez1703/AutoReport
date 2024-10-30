@@ -15,26 +15,34 @@ conn,cur=make_connection()
 
 settings = config()
 
-now_date_start = str(datetime.datetime.now().date()) + ' ' + '09:00:00.000000'
-now_date_start = datetime.datetime.strptime(now_date_start, '%Y-%m-%d %H:%M:%S.%f')
-now_date_end = str(datetime.datetime.now().date()) + ' ' + f'{datetime.datetime.now().time()}'
-now_date_end = datetime.datetime.strptime(now_date_end, '%Y-%m-%d %H:%M:%S.%f')
-
-
-
-#now_date_start = '2024-10-27' + ' ' + '09:00:00.000000'
+#now_date_start = str(datetime.datetime.now().date()) + ' ' + '09:00:00.000000'
 #now_date_start = datetime.datetime.strptime(now_date_start, '%Y-%m-%d %H:%M:%S.%f')
-#now_date_end = '2024-10-27' + ' ' + '21:00:00.000000'
+##now_date_end = str(datetime.datetime.now().date()) + ' ' + f'{datetime.datetime.now().time()}'
 #now_date_end = datetime.datetime.strptime(now_date_end, '%Y-%m-%d %H:%M:%S.%f')
 
-now_date = datetime.date.today()
+
+
+now_date_start = '2024-10-28' + ' ' + '09:00:00.000000'
+now_date_start = datetime.datetime.strptime(now_date_start, '%Y-%m-%d %H:%M:%S.%f')
+now_date_end = '2024-10-28' + ' ' + '21:00:00.000000'
+now_date_end = datetime.datetime.strptime(now_date_end, '%Y-%m-%d %H:%M:%S.%f')
+
+now_date = datetime.date.today()-datetime.timedelta(days=2)
 now_date_gisto = str(now_date)+" "
 pdf = PdfPages(fr"{os.getcwd()}/Reports/{now_date}/Графики_по_тестам_{now_date}.pdf")
 pdf2 = PdfPages(fr"{os.getcwd()}/Reports/{now_date}/Сводка_{now_date}.pdf")
 
 def get_current_time(name_table: str, name_column: str=None, ID: int | None = None, date_start: str = now_date_start,
-                          date_end: str = now_date_end,mode:int=0):
+                          date_end: str = now_date_end):
+    '''
+    Функция служит для получения правильных (для отображения) осей х и у (В данной случае словаря, который позже преобразуется в другой функции). 
+    На вход подается название таблицы, колонка в таблице, ID теста(служит для построения графиков по тестам).
+    Даты начала и конца сортировки заданы по умолчанию как сегодняшняя дата
+    На выходе получаются final_dict  для графиков matplotlib
+    '''
+    #Вариант, если строятся только графики по тестам. Ошибок в них быть не может, т.к. тест запускает, когда все проблемы устранены, а новые заводятся после остановки.
     if ID:
+        #Первоначальный парсинг всех временных штампов исходя из условий номера теста и интересующей даты
         cur.execute(
         f"""SELECT {name_column} FROM {name_table}
         WHERE {name_column}>'{date_start}' AND {name_column}<'{date_end}' and test_id={ID}""")
@@ -48,62 +56,88 @@ def get_current_time(name_table: str, name_column: str=None, ID: int | None = No
             correct_timestamp_dict_1[i]=('work',k)
             k+=1
         sorted_dict = dict(sorted(correct_timestamp_dict_1.items()))
-        new_dict = {}
+        final_dict = {}
+        #Заполнение словарей в виде ключ(дата-время):значение(кортеж(режим,значение))
         for i,j in sorted_dict.items():
             if len(j)==3:
                 if j[1]:
-                    new_dict[i]=(j[0],j[2])
-                    new_dict[j[1]]=(j[0],-100)
+                    final_dict[i]=(j[0],j[2])
+                    final_dict[j[1]]=(j[0],-100)
                 else:
-                    new_dict[i]=(j[0],j[2])
-                    new_dict[now_date_end]=(j[0],-100)
+                    final_dict[i]=(j[0],j[2])
+                    final_dict[now_date_end]=(j[0],-100)
             else:
-                new_dict[i]=j
-        new_dict = dict(sorted(new_dict.items()))
+                final_dict[i]=j
+        final_dict = dict(sorted(final_dict.items()))
+    #Вариант создания списков при построении общего графика
     else:
+
+        #Парсинг значений с поломками
+        cur.execute(f"""SELECT name_break,date_of_create_break,date_of_repair_break from breaks 
+                    WHERE date_of_create_break<'{date_end}' AND date_of_create_break>'{date_start}'""")
+        #Составление словаря ключ(дата обнаружения поломки):значение(кортеж(название_поломки,дата починки, -100(значение по умолчанию для отображения на графике)))
+        correct_timestamp_dict_2 = {i[1]:(i[0],i[2],-100) for i in cur.fetchall()}
+
+
         cur.execute(
         f"""SELECT {name_column} FROM {name_table} 
                 WHERE {name_column}>'{date_start}' AND {name_column}<'{date_end}'""")
         first_timestamp = [str(i[0].time())[0:-7] for i in cur.fetchall()]
         first_timestamp = [str(now_date)+' ' + i for i in first_timestamp] 
         correct_timestamp = [datetime.datetime.strptime(i, "%Y-%m-%d %H:%M:%S") for i in first_timestamp]
+        correct_timestamp=sorted(correct_timestamp)
         k=0
         correct_timestamp_dict_1 = {}
+        correct_timestamp_2 = []
         for i in correct_timestamp:
-            correct_timestamp_dict_1[i]=('work',k)
-            k+=1
-
-        cur.execute(f"""SELECT name_break,date_of_create_break,date_of_repair_break from breaks 
-                    WHERE date_of_create_break<'{date_end}' AND date_of_create_break>'{date_start}'""")
-        correct_timestamp_dict_2 = {i[1]:(i[0],i[2],-100) for i in cur.fetchall()}
-  
-        full_dict = {**correct_timestamp_dict_1,**correct_timestamp_dict_2}
-        sorted_dict = dict(sorted(full_dict.items()))
-
-        new_dict = {}
-        counter=0
-        for i,j in sorted_dict.items():
-            if len(j)==3:
-                if j[1]:
-                    new_dict[i]=(j[0],counter)
-                    new_dict[i+datetime.timedelta(seconds=1)]=(j[0],-100)
-                    new_dict[j[1]]=(j[0],-100)
-                    new_dict[j[1]+datetime.timedelta(seconds=1)]=(j[0],counter)
+            flagik = True
+            for j in correct_timestamp_dict_2:
+                if correct_timestamp_dict_2[j][1]:
+                    if i>j and i<correct_timestamp_dict_2[j][1]:
+                        flagik=False
                 else:
-                    new_dict[i]=(j[0],j[2])
-                    new_dict[now_date_end]=(j[0],-100)
+                    if i>j:
+                        flagik=False
+            if flagik:
+                correct_timestamp_2.append(i)
+        #Создание словаря "рабочих" значений
+        for i in correct_timestamp_2:
+            correct_timestamp_dict_1[i]=('work',k,0)
+            k+=1
+        #Объединение двух словарей и сортировка их по возрастанию временных штампов
+        full_dict = {**correct_timestamp_dict_1,**correct_timestamp_dict_2}
+        full_dict=dict(sorted(full_dict.items()))
+        final_dict = {}
+        counter=0
+        #Модернизация словаря, при котором добавляются промежуточные точки в начале и конце поломки. Нужно для правильного отображения на графиках
+        for i in full_dict.keys():
+            if not(full_dict[i][0]=='work'):
+                if full_dict[i][1]:    
+                    final_dict[i-datetime.timedelta(seconds=1)]=(full_dict[i][0],counter)
+                    final_dict[i]=(full_dict[i][0],-100)
+                    final_dict[full_dict[i][1]-datetime.timedelta(seconds=2)]=(full_dict[i][0],-100)
+                    final_dict[full_dict[i][1]+datetime.timedelta(seconds=5)]=(full_dict[i][0],counter)
+                else:
+                    final_dict[i]=(full_dict[i][0],full_dict[i][2])
+                    final_dict[i+datetime.timedelta(seconds=1)]=(full_dict[i][0],-100)
+                    final_dict[now_date_end]=(full_dict[i][0],-100)
             else:
-                new_dict[i]=j
+                final_dict[i]=(full_dict[i][0],full_dict[i][1])
                 counter+=1
-        new_dict = dict(sorted(new_dict.items()))
-    return new_dict
+        #Окончательная сортировка данных по возрастанию временных штампов
+        final_dict = dict(sorted(final_dict.items()))
+    return final_dict
 
 def make_axis(dict_data:dict):
+    """
+    Функция, преобразующая значения словаря, полученного из функции get_correct_time в оси x_label,y_label"""
     x_label = []
     y_label = []
     for i,j in dict_data.items():
         x_label.append(i)
         y_label.append(j[1])
+    #for i,j in zip(x_label,y_label):
+        #print(i,'---',j)
     return x_label,y_label
 
 
@@ -161,9 +195,7 @@ def Save_PDF_images_gisto():
     x_level = np.arange(len(list_for_graphs_y1))
     list_for_graphs_x = [i[2] for i in dict_grab.values()]
 
-    #list_for_graphs_x=sorted(list_for_graphs_x)
-    #list_for_graphs_x = [str(i) for i in list_for_graphs_x]
-
+    
     ax.bar(x_level,list_for_graphs_y1, width=0.5, linewidth=2, yerr=2,label='Количество попыток захвата')
     ax.bar(x_level,list_for_graphs_y2, width=0.5, linewidth=2, yerr=2,label='Количество успешных захватов')
     ax.legend(loc=2)
@@ -174,17 +206,19 @@ def Save_PDF_images_gisto():
     x_label,y_label=make_axis(get_current_time("grab_attempt", "attempt_timestamp"))
     x_label_2,y_label_2=make_axis(get_current_time("sorted_object", "sorted_timestamp"))
     title = 'Общая статистика'
-
     fmt = dates.DateFormatter('%H:%M:%S')
-
     # Экземпляры фигуры и графика
     ax = fig.add_subplot(2,1,1)
     cur.execute(f"""SELECT name_break,date_of_create_break,date_of_repair_break from breaks 
                     WHERE date_of_create_break<'{now_date_end}' AND date_of_create_break>'{now_date_start}'""")
     text = ''
+    
     for i in cur.fetchall():
-        timedelta = i[2]-i[1]
-        text+=f'{i[0]}, время ремонта:{timedelta.days*8 + timedelta.seconds//3600}ч,{(timedelta.seconds%3600)//60}м,{(timedelta.seconds%3600)%60}с\n'
+        if i[2]:
+            timedelta = i[2]-i[1]
+            text+=f'{i[0]}, время ремонта:{timedelta.days*8 + timedelta.seconds//3600}ч,{(timedelta.seconds%3600)//60}м,{(timedelta.seconds%3600)%60}с\n'
+        else:
+            text+=f'{i[0]}, ремонт не закончен\n'
     # Отрисовка самих графиков
     ax.plot(x_label, y_label,'-.',color='g',label='Попыток захвата',markersize=1)
     ax.plot(x_label_2, y_label_2, "--", color='r',label='Успешный захват')
@@ -300,5 +334,6 @@ def Save_PDF_images_grabs_gisto(time_step:int=1):
 if __name__ == '__main__':
     make_folder(True)
     make_folder()
+    Save_PDF_images_gisto()
     a=Save_PDF_images_grabs()
 
