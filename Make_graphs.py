@@ -15,19 +15,19 @@ conn,cur=make_connection()
 
 settings = config()
 
-#now_date_start = str(datetime.datetime.now().date()) + ' ' + '09:00:00.000000'
-#now_date_start = datetime.datetime.strptime(now_date_start, '%Y-%m-%d %H:%M:%S.%f')
-##now_date_end = str(datetime.datetime.now().date()) + ' ' + f'{datetime.datetime.now().time()}'
-#now_date_end = datetime.datetime.strptime(now_date_end, '%Y-%m-%d %H:%M:%S.%f')
-
-
-
-now_date_start = '2024-10-28' + ' ' + '09:00:00.000000'
+now_date_start = str(datetime.datetime.now().date()) + ' ' + '09:00:00.000000'
 now_date_start = datetime.datetime.strptime(now_date_start, '%Y-%m-%d %H:%M:%S.%f')
-now_date_end = '2024-10-28' + ' ' + '21:00:00.000000'
+now_date_end = str(datetime.datetime.now().date()) + ' ' + f'{datetime.datetime.now().time()}'
 now_date_end = datetime.datetime.strptime(now_date_end, '%Y-%m-%d %H:%M:%S.%f')
 
-now_date = datetime.date.today()-datetime.timedelta(days=2)
+print(now_date_start)
+
+#now_date_start = '2024-10-28' + ' ' + '09:00:00.000000'
+#now_date_start = datetime.datetime.strptime(now_date_start, '%Y-%m-%d %H:%M:%S.%f')
+#now_date_end = '2024-10-28' + ' ' + '21:00:00.000000'
+#now_date_end = datetime.datetime.strptime(now_date_end, '%Y-%m-%d %H:%M:%S.%f')
+
+now_date = datetime.date.today()
 now_date_gisto = str(now_date)+" "
 pdf = PdfPages(fr"{os.getcwd()}/Reports/{now_date}/Графики_по_тестам_{now_date}.pdf")
 pdf2 = PdfPages(fr"{os.getcwd()}/Reports/{now_date}/Сводка_{now_date}.pdf")
@@ -74,7 +74,7 @@ def get_current_time(name_table: str, name_column: str=None, ID: int | None = No
 
         #Парсинг значений с поломками
         cur.execute(f"""SELECT name_break,date_of_create_break,date_of_repair_break from breaks 
-                    WHERE date_of_create_break<'{date_end}' AND date_of_create_break>'{date_start}'""")
+                    WHERE date_of_create_break<'{now_date_end}' AND (date_of_repair_break>'{now_date_start}' OR date_of_repair_break=NULL)""")
         #Составление словаря ключ(дата обнаружения поломки):значение(кортеж(название_поломки,дата починки, -100(значение по умолчанию для отображения на графике)))
         correct_timestamp_dict_2 = {i[1]:(i[0],i[2],-100) for i in cur.fetchall()}
 
@@ -108,8 +108,9 @@ def get_current_time(name_table: str, name_column: str=None, ID: int | None = No
         full_dict = {**correct_timestamp_dict_1,**correct_timestamp_dict_2}
         full_dict=dict(sorted(full_dict.items()))
         final_dict = {}
-        counter=0
+        counter=1
         #Модернизация словаря, при котором добавляются промежуточные точки в начале и конце поломки. Нужно для правильного отображения на графиках
+        
         for i in full_dict.keys():
             if not(full_dict[i][0]=='work'):
                 if full_dict[i][1]:    
@@ -210,7 +211,7 @@ def Save_PDF_images_gisto():
     # Экземпляры фигуры и графика
     ax = fig.add_subplot(2,1,1)
     cur.execute(f"""SELECT name_break,date_of_create_break,date_of_repair_break from breaks 
-                    WHERE date_of_create_break<'{now_date_end}' AND date_of_create_break>'{now_date_start}'""")
+                    WHERE date_of_create_break<'{now_date_end}' AND (date_of_repair_break>'{now_date_start}' OR date_of_repair_break=NULL)""")
     text = ''
     
     for i in cur.fetchall():
@@ -225,7 +226,7 @@ def Save_PDF_images_gisto():
     ax.plot([now_date_start,now_date_end], [0,0],'-.',color='black',markersize=1)
     if text:
         text=f'Поломки за {now_date}\n\n'+text
-        ax.text(x_label[0],y_label[int(len(y_label)*0.8)],f'{text}',style ='italic', 
+        ax.text(now_date_start,y_label[int(len(y_label)*0.8)],f'{text}',style ='italic', 
         fontsize = 10, 
         bbox ={'facecolor':'green', 
                'alpha':0.6, 'pad':2})
@@ -238,7 +239,7 @@ def Save_PDF_images_gisto():
     ax.grid(True)
     ax.xaxis.set_major_formatter(fmt)
     if len(x_label)>0 and len(x_label_2)>0:
-        ax.set_xlim(min(x_label[0],x_label_2[0]),max(x_label[-1],x_label_2[-1]))
+        ax.set_xlim(now_date_start,max(x_label[-1],x_label_2[-1]))
     return fig
 
 def Save_PDF_images_grabs(flag:int=0):
