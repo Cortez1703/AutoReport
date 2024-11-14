@@ -107,7 +107,7 @@ now_date = datetime.date.today()
 now_date_tag = datetime.date.today().strftime("%y_%m_%d")
 
 async def send_message(name_of_file:str,channel_id: int,flag1:int=1,flag:int=1):
-    if os.path.exists(fr"{os.getcwd()}/Reports/{now_date}/Графики_по_тестам_{now_date}.pdf") and flag1>0:
+    if os.path.exists(fr"{./Reports/{now_date}/Графики_по_тестам_{now_date}.pdf") and flag1>0:
         if flag:
             if ans:
                 await bot.send_message(channel_id,f'''{ans}''')
@@ -133,8 +133,8 @@ async def sending(name_of_file:str,chat_id,flag1:int=1,flag:int=1):
 
 async def main(flag:bool=True,chat_id:int=my_id):
     if flag:
-        task1 = asyncio.create_task(sending(fr"{os.getcwd()}/Reports/{now_date}/Графики_по_тестам",chat_id))
-        task2 = asyncio.create_task(sending(fr"{os.getcwd()}/Reports/{now_date}/Сводка",chat_id,flag1=1,flag=0))
+        task1 = asyncio.create_task(sending(fr"./Reports/{now_date}/Графики_по_тестам",chat_id))
+        task2 = asyncio.create_task(sending(fr"./Reports/{now_date}/Сводка",chat_id,flag1=1,flag=0))
 
         await task1
         await task2
@@ -145,10 +145,12 @@ async def main(flag:bool=True,chat_id:int=my_id):
 if __name__ == '__main__':
     Make_graphs.make_folder(True)
     Make_graphs.make_folder()
+    print(1)
     count_of_data=Make_graphs.Save_PDF_images_grabs()
     Make_graphs.Save_PDF_images_grabs_gisto()
     if count_of_data:
         try:
+            print(1)
             asyncio.run(main())
         except Exception as e:
             print(e)
