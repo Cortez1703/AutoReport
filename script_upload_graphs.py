@@ -1,22 +1,30 @@
-
 import datetime
 import asyncio
 import os
+
 from aiogram import Bot
 from aiogram.types import FSInputFile
 from sys import argv
+
 import Make_graphs
+
 from DB_connection import make_connection
 from verify_breaks import get_breaks,get_ans
+
 conn,cur = make_connection()
+
 ans = get_ans(get_breaks(cur))
+
 args = argv
 print(args)
+
 my_id = 872965519
 message_id=''
+
 if len(args)>1:
     my_id=args[1]
     message_id = args[2]
+
 class config():
     def __init__(self):
         self.DB_CONFIG={
@@ -83,8 +91,7 @@ class config():
     "51": "9.1.1_Дерево-И-Доски",
     "52": "10.1.1_Шины-И-Покрышки",
     "53": "11.1.1_Электроприборы",
-    "54": "12.1.1_Вторсырьё-Другое"
-}
+    "54": "12.1.1_Вторсырьё-Другое"}
 
 settings = config()
 
