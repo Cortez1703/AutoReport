@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash/env python3
 
 if [ -n "$1" ]
 then
