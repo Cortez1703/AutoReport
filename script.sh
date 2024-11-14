@@ -10,9 +10,9 @@ if [ -n "$1" ]
 then
 if [ -n "$2" ]
 then
-cd /home/`whoami`/AutoReport &&/home/`whoami`/.local/share/virtualenvs/$namepipenv/bin/python3 /home/`whoami`/AutoReport/script_upload_graphs.py $1 $2
+cd ../AutoReport &&/home/`whoami`/.local/share/virtualenvs/$namepipenv/bin/python3 /home/`whoami`/AutoReport/script_upload_graphs.py $1 $2
 else
-cd /home/`whoami`/AutoReport &&/home/`whoami`/.local/share/virtualenvs/$namepipenv/bin/python3 /home/`whoami`/AutoReport/script_upload_graphs.py $1 
+cd ../AutoReport &&/home/`whoami`/.local/share/virtualenvs/$namepipenv/bin/python3 /home/`whoami`/AutoReport/script_upload_graphs.py $1 
 fi
 else cd /home/`whoami`/AutoReport &&/home/`whoami`/.local/share/virtualenvs/$namepipenv/bin/python3 /home/`whoami`/AutoReport/script_upload_graphs.py
 fi

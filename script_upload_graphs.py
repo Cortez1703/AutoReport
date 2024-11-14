@@ -46,11 +46,11 @@ async def send_message(name_of_file:str,channel_id: int,flag1:int=1,flag:int=1):
         if not bool(ans):
             await bot.send_message(channel_id,f'''#Отчет_за_{now_date_tag}\nРобот не работал до нынешнего момента''')
             if message_id:
-                bot.delete_message(channel_id,message_id)
+                bot.delete_message(channel_id,message_id-1)
         else:
             await bot.send_message(channel_id,f'''#Отчет_за_{now_date_tag}\nРобот не работал до нынешнего момента\n{ans}''')
             if message_id:
-                bot.delete_message(channel_id,message_id)
+                bot.delete_message(channel_id,message_id-1)
 
 async def sending(name_of_file:str,chat_id,flag1:int=1,flag:int=1):
     await send_message(name_of_file,chat_id,flag1,flag)
