@@ -107,7 +107,7 @@ now_date = datetime.date.today()
 now_date_tag = datetime.date.today().strftime("%y_%m_%d")
 
 async def send_message(name_of_file:str,channel_id: int,flag1:int=1,flag:int=1):
-    if os.path.exists(fr"{./Reports/{now_date}/Графики_по_тестам_{now_date}.pdf") and flag1>0:
+    if os.path.exists(fr"./Reports/{now_date}/Графики_по_тестам_{now_date}.pdf") and flag1>0:
         if flag:
             if ans:
                 await bot.send_message(channel_id,f'''{ans}''')
