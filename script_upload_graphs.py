@@ -22,8 +22,8 @@ my_id = 872965519
 message_id=''
 
 if len(args)>1:
-    my_id=args[1]
-    message_id = args[2]
+    my_id=int(args[1])
+    message_id = int(args[2])
 
 class config():
     def __init__(self):
