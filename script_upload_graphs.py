@@ -12,11 +12,12 @@ from verify_breaks import get_breaks,get_ans
 conn,cur = make_connection()
 ans = get_ans(get_breaks(cur))
 args = argv
-
+print(args)
 my_id = 872965519
-
+message_id=''
 if len(args)>1:
     my_id=args[1]
+    message_id = args[2]
 settings = config()
 
 group_id =872965519
@@ -44,8 +45,12 @@ async def send_message(name_of_file:str,channel_id: int,flag1:int=1,flag:int=1):
     else:
         if not bool(ans):
             await bot.send_message(channel_id,f'''#Отчет_за_{now_date_tag}\nРобот не работал до нынешнего момента''')
+            if message_id:
+                bot.delete_message(channel_id,message_id)
         else:
             await bot.send_message(channel_id,f'''#Отчет_за_{now_date_tag}\nРобот не работал до нынешнего момента\n{ans}''')
+            if message_id:
+                bot.delete_message(channel_id,message_id)
 
 async def sending(name_of_file:str,chat_id,flag1:int=1,flag:int=1):
     await send_message(name_of_file,chat_id,flag1,flag)
