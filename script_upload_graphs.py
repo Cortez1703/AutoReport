@@ -148,6 +148,7 @@ if __name__ == '__main__':
     print(1)
     count_of_data=Make_graphs.Save_PDF_images_grabs()
     Make_graphs.Save_PDF_images_grabs_gisto()
+    print(count_of_data)
     if count_of_data:
         try:
             print(1)
