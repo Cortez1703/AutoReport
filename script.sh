@@ -14,5 +14,5 @@ cd ../AutoReport &&/home/`whoami`/.local/share/virtualenvs/$namepipenv/bin/pytho
 else
 cd ../AutoReport &&/home/`whoami`/.local/share/virtualenvs/$namepipenv/bin/python3 /home/`whoami`/AutoReport/script_upload_graphs.py $1 
 fi
-else cd /home/`whoami`/AutoReport &&/home/`whoami`/.local/share/virtualenvs/$namepipenv/bin/python3 /home/`whoami`/AutoReport/script_upload_graphs.py
+else cd ../AutoReport && ../.local/share/virtualenvs/$namepipenv/bin/python3 ../AutoReport/script_upload_graphs.py
 fi
