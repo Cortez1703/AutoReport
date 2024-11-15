@@ -5,3 +5,4 @@ test.py
 /Reports/*
 .idea
 __pycache__
+config.yaml
