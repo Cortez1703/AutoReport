@@ -22,7 +22,7 @@ Creater_im = Creater_image(cur,conn,Executer)
 
 args = argv
 ans = get_ans(get_breaks(cur))
-my_id = 872965519
+my_id = -1002259594246 
 message_id=''
 
 if len(args)>1:
@@ -82,7 +82,7 @@ async def main(flag:bool=True,chat_id:int=my_id):
 if __name__ == '__main__':
     make_folder(True)
     make_folder()
-    flag = Creater_im.Save_PDF_images_grabs
+    flag = Creater_im.Save_PDF_images_grabs()
     Creater_im.Save_PDF_images_grabs_gisto()
     if flag:
         try:

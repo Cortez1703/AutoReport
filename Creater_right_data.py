@@ -12,10 +12,10 @@ class Creater:
         self.now_date_start = datetime.datetime.strptime(self.now_date_start, '%Y-%m-%d %H:%M:%S.%f')
         self.now_date_end = str(datetime.datetime.now().date()) + ' ' + f'{datetime.datetime.now().time()}'
         self.now_date_end = datetime.datetime.strptime(self.now_date_end, '%Y-%m-%d %H:%M:%S.%f')
-        self.now_date_start = '2024-11-15' + ' ' + '09:01:02.000000'
-        self.now_date_start = datetime.datetime.strptime(self.now_date_start, '%Y-%m-%d %H:%M:%S.%f')
-        self.now_date_end = '2024-11-15' + ' ' + '21:01:02.000000'
-        self.now_date_end = datetime.datetime.strptime(self.now_date_end, '%Y-%m-%d %H:%M:%S.%f')
+        #self.now_date_start = '2024-11-15' + ' ' + '09:01:02.000000'
+        #self.now_date_start = datetime.datetime.strptime(self.now_date_start, '%Y-%m-%d %H:%M:%S.%f')
+        #self.now_date_end = '2024-11-15' + ' ' + '21:01:02.000000'
+        #self.now_date_end = datetime.datetime.strptime(self.now_date_end, '%Y-%m-%d %H:%M:%S.%f')
 
         self.now_date = datetime.date.today()
         self.now_date_gisto = str(self.now_date)+" "

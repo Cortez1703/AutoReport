@@ -111,15 +111,18 @@ class Creater_image(Creater):
         # Экземпляры фигуры и графика
         ax = fig.add_subplot(2,1,1)
         data_of_breaks = self.Executer.data_of_breaks(self.now_date_start,self.now_date_end)
-
+        print(data_of_breaks)
         text = ''
         
         for i in data_of_breaks:
-            if data_of_breaks[i][2]:
-                timedelta = i[2]-i[1]
-                text+=f'{i[0]}, время ремонта:{timedelta.days*8 + timedelta.seconds//3600}ч,{(timedelta.seconds%3600)//60}м,{(timedelta.seconds%3600)%60}с\n'
+            if data_of_breaks[i][1]:
+                
+                timedelta = data_of_breaks[i][1]-i
+                print(timedelta.days)
+                print(timedelta.seconds//3600)
+                text+=f'{data_of_breaks[i][0]}, время ремонта:{timedelta.days*8 + timedelta.seconds//3600}ч,{(timedelta.seconds%3600)//60}м,{(timedelta.seconds%3600)%60}с\n'
             else:
-                text+=f'{i[0]}, ремонт не закончен\n'
+                text+=f'{data_of_breaks[i][0]}, ремонт не закончен\n'
         # Отрисовка самих графиков
         ax.plot(x_label, y_label,'-.',color='g',label='Попыток захвата',markersize=1)
         ax.plot(x_label_2, y_label_2, "--", color='r',label='Успешный захват')
