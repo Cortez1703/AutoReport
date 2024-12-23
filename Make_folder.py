@@ -29,3 +29,6 @@ def make_folder(level: bool = False):
                 os.mkdir(path.abspath('') + fr'\Reports\{now_date}')
         else:
             print('pizdec')
+
+
+make_folder()

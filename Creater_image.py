@@ -162,6 +162,7 @@ class Creater_image(Creater):
             title = f'Статистика для опыта №{idshnik}'
             
             self.pdf.savefig(self.make_graph(x_label,x_label_2,y_label,y_label_2,title))
+            
         self.pdf.savefig(self.Save_PDF_images_gisto())
         # Сохранение общего графика за сегодняшнюю дату
 
@@ -172,7 +173,7 @@ class Creater_image(Creater):
             return None
         
     def Save_PDF_images_grabs_gisto(self,time_step:int=1):
-        plt.close('all')
+        
         x_full = []
         x_succec = []
         y_full = []
@@ -227,6 +228,7 @@ class Creater_image(Creater):
         plt.ylabel("V,предметы/минута")
         plt.xlim(9,21)
         
+        
         self.pdf2.savefig()
         self.pdf2.close()
 
@@ -234,5 +236,6 @@ if __name__=='__main__':
     testclass = Creater_image(cursor,connection,Executer)
     make_folder(True)
     make_folder()
-    testclass.Save_PDF_images_gisto()
-    a=testclass.Save_PDF_images_grabs()
+    #testclass.Save_PDF_images_gisto()
+    #a=testclass.Save_PDF_images_grabs()
+    testclass.Save_PDF_images_grabs_gisto()
