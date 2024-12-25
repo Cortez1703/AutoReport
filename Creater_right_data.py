@@ -32,10 +32,11 @@ class Creater:
         '''
         if ID:
             #Первоначальный парсинг всех временных штампов исходя из условий номера теста и интересующей даты
-            correct_timestamp=self.Executer.data_for_graphs(name_column,name_table,self.now_date_start,self.now_date_end)
-            sorted_dict = self._make_work_dict(correct_timestamp)
-            final_dict = self._make_full_dict(sorted_dict)
+            correct_timestamp=self.Executer.data_for_graphs(name_column,name_table,self.now_date_start,self.now_date_end,ID)
 
+            sorted_dict = self._make_work_dict(correct_timestamp)
+
+            final_dict = self._make_full_dict(sorted_dict)
         #Вариант создания списков при построении общего графика
         else:
             dict_of_breaks_1 = self.Executer.data_of_breaks(self.now_date_start,self.now_date_end)

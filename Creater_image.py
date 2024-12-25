@@ -73,9 +73,6 @@ class Creater_image(Creater):
         dict_grab = {}
         dict_sorted = {} 
         list_of_category_grab,list_of_category_sorted = self.Executer.data_of_sorted(self.now_date_start,self.now_date_end)
-        print(list_of_category_grab)
-        print('---')
-        print(list_of_category_sorted)
         #Добавление количества включений той или иной категории
         for i in set(list_of_category_grab):
             dict_grab[i]=list_of_category_grab.count(i)
@@ -115,15 +112,14 @@ class Creater_image(Creater):
         # Экземпляры фигуры и графика
         ax = fig.add_subplot(2,1,1)
         data_of_breaks = self.Executer.data_of_breaks(self.now_date_start,self.now_date_end)
-        print(data_of_breaks)
+
         text = ''
         
         for i in data_of_breaks:
             if data_of_breaks[i][1]:
                 
                 timedelta = data_of_breaks[i][1]-i
-                print(timedelta.days)
-                print(timedelta.seconds//3600)
+
                 text+=f'{data_of_breaks[i][0]}, время ремонта:{timedelta.days*8 + timedelta.seconds//3600}ч,{(timedelta.seconds%3600)//60}м,{(timedelta.seconds%3600)%60}с\n'
             else:
                 text+=f'{data_of_breaks[i][0]}, ремонт не закончен\n'
@@ -164,8 +160,10 @@ class Creater_image(Creater):
             if len(x_label)>0 or len(x_label_2)>0:
                 flag+=1
             title = f'Статистика для опыта №{idshnik}'
+
             
             self.pdf.savefig(self.make_graph(x_label,x_label_2,y_label,y_label_2,title))
+
             time.sleep(0.1)
             
         self.pdf.savefig(self.Save_PDF_images_gisto())
@@ -232,6 +230,7 @@ class Creater_image(Creater):
         plt.xlabel("Время в часах")
         plt.ylabel("V,предметы/минута")
         plt.xlim(9,21)
+        plt.ylim(0,60)
         
         
         self.pdf2.savefig()
@@ -242,5 +241,5 @@ if __name__=='__main__':
     make_folder(True)
     make_folder()
     #testclass.Save_PDF_images_gisto()
-    #a=testclass.Save_PDF_images_grabs()
+    a=testclass.Save_PDF_images_grabs()
     testclass.Save_PDF_images_grabs_gisto()

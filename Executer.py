@@ -17,6 +17,7 @@ class Executer:
             #listik = [i[0] for i in self.cur.fetchall()]
             #list_of_data = [datetime.datetime.strftime(i, "%Y-%m-%d %H:%M:%S") for i in listik]
             first_timestamp = [str(i[0].time())[0:-7] for i in self.cur.fetchall()]
+            print(len(first_timestamp))
             first_timestamp = [str(self.now_date)+' ' + i for i in first_timestamp]
             list_of_data = [datetime.datetime.strptime(i, "%Y-%m-%d %H:%M:%S") for i in first_timestamp]
         else:
