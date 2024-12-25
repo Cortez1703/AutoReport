@@ -8,7 +8,7 @@ class Creater:
         self.cur = cur
         self.con = con
         self.Executer=Ex
-        self.now_date_start = str(datetime.datetime.now().date()) + ' ' + '18:40:00.000000'
+        self.now_date_start = str(datetime.datetime.now().date()) + ' ' + '09:00:00.000000'
         self.now_date_start = datetime.datetime.strptime(self.now_date_start, '%Y-%m-%d %H:%M:%S.%f')
         #self.now_date_start = str(datetime.datetime.now().date()) + ' ' + '09:00:00.000000'
         #self.now_date_start = datetime.datetime.strptime(self.now_date_start, '%Y-%m-%d %H:%M:%S.%f')

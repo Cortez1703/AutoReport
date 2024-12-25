@@ -16,6 +16,7 @@ from DB_connection import make_connection
 import datetime
 import os
 import yaml
+import time
 
 Executer = Ex()
 connection,cursor=make_connection()
@@ -72,7 +73,9 @@ class Creater_image(Creater):
         dict_grab = {}
         dict_sorted = {} 
         list_of_category_grab,list_of_category_sorted = self.Executer.data_of_sorted(self.now_date_start,self.now_date_end)
-
+        print(list_of_category_grab)
+        print('---')
+        print(list_of_category_sorted)
         #Добавление количества включений той или иной категории
         for i in set(list_of_category_grab):
             dict_grab[i]=list_of_category_grab.count(i)
@@ -97,6 +100,7 @@ class Creater_image(Creater):
         x_level = np.arange(len(list_for_graphs_y1))
         list_for_graphs_x = [i[2] for i in dict_grab.values()]
 
+        
         
         ax.bar(x_level,list_for_graphs_y1, width=0.5, linewidth=2, yerr=2,label='Количество попыток захвата')
         ax.bar(x_level,list_for_graphs_y2, width=0.5, linewidth=2, yerr=2,label='Количество успешных захватов')
@@ -162,6 +166,7 @@ class Creater_image(Creater):
             title = f'Статистика для опыта №{idshnik}'
             
             self.pdf.savefig(self.make_graph(x_label,x_label_2,y_label,y_label_2,title))
+            time.sleep(0.1)
             
         self.pdf.savefig(self.Save_PDF_images_gisto())
         # Сохранение общего графика за сегодняшнюю дату
