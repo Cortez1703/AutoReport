@@ -45,7 +45,7 @@ class Creater_image(Creater):
         fig, ax = plt.subplots()
 
         # Отрисовка самих графиков
-        ax.plot(x_label, y_label,'-.',color='g',label='Попыток захвата',markersize=1)
+        ax.plot(x_label, y_label,'-.',color='b',label='Попыток захвата',markersize=1)
         ax.plot(x_label_2,y_label_2, "--", color='r',label='Успешный захват')
         if len(y_label)<1:
             ax.set_title(f'''{title}\nВсего захватов {len(y_label)},
@@ -144,7 +144,7 @@ class Creater_image(Creater):
         ax.grid(True)
         ax.xaxis.set_major_formatter(fmt)
         if len(x_label)>0 and len(x_label_2)>0:
-            ax.set_xlim(self.now_date_start,max(x_label[-1],x_label_2[-1]))
+            ax.set_xlim(min(x_label[0],x_label_2[0]),max(x_label[-1],x_label_2[-1]))
         return fig
     
     def Save_PDF_images_grabs(self,flag:int=0):
@@ -176,7 +176,7 @@ class Creater_image(Creater):
             return None
         
     def Save_PDF_images_grabs_gisto(self,time_step:int=1):
-        
+        plt.close('all')
         x_full = []
         x_succec = []
         y_full = []
@@ -219,17 +219,26 @@ class Creater_image(Creater):
             y_full.remove(0)
         if len(x_full) and len(y_full):
             plt.step([x_full[0],x_full[-1]],[mean(y_full),mean(y_full)],'--',label='Средняя скорость попыток захвата',color='b')
+            try:
+                plt.text(x_full[0],(mean(y_full)//10)*10 +15,f'{round(mean(y_full)*60,2)} - попыток в час',fontsize=20)
+            except Exception as e:
+                print(e)
         while 0 in y_succel:
             y_succel.remove(0)
         if len(x_succec) and len(y_succel):    
             plt.step([x_succec[0],x_succec[-1]],[mean(y_succel),mean(y_succel)],'--',label='Средняя скорость успешных попыток захвата',color='orange')
+            try:
+                plt.text(x_succec[0],(mean(y_succel)//10)*10 +5,f'{round(mean(y_succel)*60,2)} - успешных в час',fontsize=20)
+            except Exception as e:
+                print(e)
         plt.legend()
         plt.title(f"""Общее количество попыток {sum(y_full)}, количество успешных попыток {sum(y_succel)}.
     КПД {(sum(y_succel) / (1+sum(y_full))) * 100:.2f}%""")
         plt.grid(True)
         plt.xlabel("Время в часах")
         plt.ylabel("V,предметы/минута")
-        plt.xlim(9,21)
+
+        plt.xlim(min(x_succec[0],x_full[0]),max(x_full[-1],x_succec[-1]))
         plt.ylim(0,60)
         
         
@@ -241,5 +250,6 @@ if __name__=='__main__':
     make_folder(True)
     make_folder()
     #testclass.Save_PDF_images_gisto()
-    a=testclass.Save_PDF_images_grabs()
     testclass.Save_PDF_images_grabs_gisto()
+    a=testclass.Save_PDF_images_grabs()
+    

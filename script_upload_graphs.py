@@ -22,6 +22,7 @@ Creater_im = Creater_image(cur,conn,Executer)
 
 args = argv
 ans = get_ans(get_breaks(cur))
+#my_id=872965519 
 my_id = -1002259594246 
 message_id=''
 
