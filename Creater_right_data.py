@@ -8,11 +8,11 @@ class Creater:
         self.cur = cur
         self.con = con
         self.Executer=Ex
-        self.now_date_start = str(datetime.datetime.now().date()) + ' ' + '09:00:00.000000'
+        self.now_date_start = str(datetime.datetime.now().date()-datetime.timedelta(days=1)) + ' ' + '09:00:00.000000'
         self.now_date_start = datetime.datetime.strptime(self.now_date_start, '%Y-%m-%d %H:%M:%S.%f')
         #self.now_date_start = str(datetime.datetime.now().date()) + ' ' + '09:00:00.000000'
         #self.now_date_start = datetime.datetime.strptime(self.now_date_start, '%Y-%m-%d %H:%M:%S.%f')
-        self.now_date_end = str(datetime.datetime.now().date()) + ' ' + f'{datetime.datetime.now().time()}'
+        self.now_date_end = str(datetime.datetime.now().date()-datetime.timedelta(days=1)) + ' ' + f'21:00:00.000000'
         self.now_date_end = datetime.datetime.strptime(self.now_date_end, '%Y-%m-%d %H:%M:%S.%f')
         #self.now_date_start = '2024-11-15' + ' ' + '09:01:02.000000'
         #self.now_date_start = datetime.datetime.strptime(self.now_date_start, '%Y-%m-%d %H:%M:%S.%f')
@@ -54,6 +54,10 @@ class Creater:
 
     
     def _make_work_dict(self,list_of_data:list) -> dict:
+        """
+        Формирование словаря [время_срабатывания - (work,номер_срабатывания)]
+        """
+
         k=0
         dict_of_work_data = {}
         for i in list_of_data:

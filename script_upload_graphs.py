@@ -22,8 +22,8 @@ Creater_im = Creater_image(cur,conn,Executer)
 
 args = argv
 ans = get_ans(get_breaks(cur))
-#my_id=872965519 
-my_id = -1002259594246 
+my_id=872965519 
+#my_id = -1002259594246 
 message_id=''
 
 if len(args)>1:
@@ -65,19 +65,16 @@ async def send_message(name_of_file:str,channel_id: int,flag1:int=1,flag:int=1):
             if message_id:
                 await bot.delete_message(channel_id,message_id-1)
 
-async def sending(name_of_file:str,chat_id,flag1:int=1,flag:int=1):
-    await send_message(name_of_file,chat_id,flag1,flag)
-
 
 async def main(flag:bool=True,chat_id:int=my_id):
     if flag:
-        task1 = asyncio.create_task(sending(fr"./Reports/{now_date}/Графики_по_тестам",chat_id))
-        task2 = asyncio.create_task(sending(fr"./Reports/{now_date}/Сводка",chat_id,flag1=1,flag=0))
+        task1 = asyncio.create_task(send_message(fr"./Reports/{now_date}/Графики_по_тестам",chat_id))
+        task2 = asyncio.create_task(send_message(fr"./Reports/{now_date}/Сводка",chat_id,flag1=1,flag=0))
 
         await task1
         await task2
     else:
-        task1 = asyncio.create_task(sending('pupa',chat_id,flag1=0))
+        task1 = asyncio.create_task(send_message('pupa',chat_id,flag1=0))
         await task1
 
 if __name__ == '__main__':
