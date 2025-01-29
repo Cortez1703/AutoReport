@@ -22,7 +22,7 @@ Creater_im = Creater_image(cur,conn,Executer)
 
 args = argv
 ans = get_ans(get_breaks(cur))
-my_id=872965519 
+my_id=-1002259594246
 #my_id = -1002259594246 
 message_id=''
 
@@ -33,7 +33,7 @@ if len(args)>1:
 with open('config.yaml') as f:
             dataframe = yaml.load(f,yaml.FullLoader)
 
-group_id =872965519
+group_id =-1002259594246
 # Константы id бота и канала
 API_TOKEN = dataframe['api_token_bot']
 CHANNEL_ID = group_id  # это должен быть int, например -1006666666666
