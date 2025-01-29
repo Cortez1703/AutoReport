@@ -1,3 +1,4 @@
+
 dbname: ram_testing
 user: ram
 password: fuckingdatabase
@@ -5,7 +6,7 @@ host: 192.168.6.157
 port: 5440
 id_my : 872965519
 group_id : -1002259594246
-api_token_bot : 7725614078:AAFv71izXkxQ5LKoB28Etrf7rMteYo0dw_I
+api_token_bot : 7725614078:AAEUBv9cxtTh2ai67Zccm14E3V3M_qs2XfA
 dataframes : 
   '1': 1.1.1_Бутылки-Прозрачный
   '2': 1.1.2_Бутылка-Светло-Зелёный

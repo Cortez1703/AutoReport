@@ -3,7 +3,6 @@ import yaml
 
 with open('config.yaml') as f:
             dataframe = yaml.load(f,yaml.FullLoader)
-
 def make_connection():
     """
     Возвращает указатели для работы с бд

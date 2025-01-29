@@ -82,6 +82,7 @@ if __name__ == '__main__':
     make_folder()
     flag = Creater_im.Save_PDF_images_grabs()
     Creater_im.Save_PDF_images_grabs_gisto()
+    Creater_im.Save_PDF_images_odometr_gisto()
     if flag:
         try:
             asyncio.run(main())
