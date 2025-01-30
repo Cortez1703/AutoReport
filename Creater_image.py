@@ -52,11 +52,11 @@ class Creater_image(Creater):
                 label='Попыток захвата', markersize=1)
         ax.plot(x_label_2, y_label_2, "--", color='r', label='Успешный захват')
         if len(y_label) < 1:
-            ax.set_title(f'''{title}\nВсего захватов {len(y_label)},
-                         успешных захватов {len(y_label_2)}.КПД {(len(y_label_2) / (len(y_label)+1)) * 100:.2f}%''')
+            ax.set_title(f'''{title}\nВсего захватов {y_label[-1]},
+                         успешных захватов {y_label_2[-1]}.КПД {(y_label_2[-1] / (len(y_label+1))) * 100:.2f}%''')
         else:
-            ax.set_title(f'''{title}\nВсего захватов {len(y_label)},
-                         успешных захватов {len(y_label_2)}.КПД {(len(y_label_2) / (len(y_label))) * 100:.2f}%''')
+            ax.set_title(f'''{title}\nВсего захватов {y_label[-1]},
+                         успешных захватов {y_label_2[-1]}.КПД {(y_label_2[-1] / (y_label[-1])) * 100:.2f}%''')
         ax.title.set_fontsize(10)
         ax.legend()
         ax.grid(True)
@@ -97,7 +97,6 @@ class Creater_image(Creater):
         for i in dict_grab.keys():
             dict_grab[i].append(dataframe['dataframes'][str(i)][6:])
         list_of_KPD = [f'{round((i[1]/i[0])*100,2)}%' for i in dict_grab.values()]
-        print(list_of_KPD)
         list_for_graphs_y1 = [i[0] for i in dict_grab.values()]
         list_for_graphs_y2 = [i[1] for i in dict_grab.values()]
         x_level = np.arange(len(list_for_graphs_y1))
@@ -114,7 +113,6 @@ class Creater_image(Creater):
         ax.set_xticks(x_level)
         ax.set_xticklabels(list_for_graphs_x, rotation=20, ha='right')
         ax.grid()
-        plt.show()
         x_label, y_label = self.make_axis(
             self.get_current_time("grab_attempt", "attempt_timestamp"))
         x_label_2, y_label_2 = self.make_axis(self.get_current_time(
@@ -149,11 +147,11 @@ class Creater_image(Creater):
                     bbox={'facecolor': 'green',
                           'alpha': 0.6, 'pad': 2})
         if len(y_label) < 1:
-            ax.set_title(f'''{title}\nВсего захватов {len(y_label)},
-                         успешных захватов {len(y_label_2)}.КПД {(len(y_label_2) / (len(y_label)+1)) * 100:.2f}%''')
+            ax.set_title(f'''{title}\nВсего захватов {y_label[-1]},
+                         успешных захватов {y_label_2[-1]}.КПД {(y_label_2[-1] / (len(y_label+1))) * 100:.2f}%''')
         else:
-            ax.set_title(f'''{title}\nВсего захватов {len(y_label)},
-                         успешных захватов {len(y_label_2)}.КПД {(len(y_label_2) / (len(y_label))) * 100:.2f}%''')
+            ax.set_title(f'''{title}\nВсего захватов {y_label[-1]},
+                         успешных захватов {y_label_2[-1]}.КПД {(y_label_2[-1] / (y_label[-1])) * 100:.2f}%''')
         ax.title.set_fontsize(10)
         ax.legend()
         ax.grid(True)
@@ -178,6 +176,7 @@ class Creater_image(Creater):
                 "grab_attempt", "attempt_timestamp", idshnik, True))
             if len(x_label) > 0 or len(x_label_2) > 0:
                 flag += 1
+            
             title = f'Статистика для опыта №{idshnik}'
 
             self.pdf.savefig(self.make_graph(
@@ -294,7 +293,6 @@ class Creater_image(Creater):
                 y_label = [x+y for x, y, in zip(y_label, y_distribution)]
                 z_label = [x+y for x, y, in zip(z_label, z_distribution)]
                 d += distance
-        print(x_label, '\n', y_label, '\n', z_label, '\n', d)
     
         x_level = np.arange(len(x_area))
         y_level = np.arange(len(y_area))
@@ -322,9 +320,6 @@ class Creater_image(Creater):
 
         self.pdf2.savefig()
         self.pdf2.close()
-if __name__ == '__main__':
-    testclass = Creater_image(cursor, connection, Executer)
-    testclass.Save_PDF_images_gisto()
 
 
 

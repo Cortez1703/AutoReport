@@ -84,7 +84,7 @@ class Executer:
         if correct_timestamp_dict_2:
             return correct_timestamp_dict_2
         else:
-            return {}
+            return 
 
     def data_of_sorted(self, now_date_start, now_date_end):
         """

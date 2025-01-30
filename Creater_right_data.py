@@ -74,18 +74,24 @@ class Creater:
             else:
                 list_of_works_1 = self.Executer.data_for_graphs(
                     name_column, name_table, self.now_date_start, self.now_date_end)
-
+            
             k = 0
             correct_dict_of_work = {}
+
             # Создание словаря "рабочих" значений
-            for i in self._make_correct_list_of_work(list_of_works_1, dict_of_breaks_1):
+            sublist = self._make_correct_list_of_work(list_of_works_1, dict_of_breaks_1)
+            for i in sublist:
                 correct_dict_of_work[i] = ('work', k, 0)
                 k += 1
+
             # Объединение двух словарей и сортировка их по возрастанию временных штампов
             full_dict = dict(
                 sorted({**dict_of_breaks_1, **correct_dict_of_work}.items()))
+
             final_dict = self._final_dict_without_id(
                 full_dict, self.now_date_end)
+
+
         return final_dict
 
     def _make_work_dict(self, list_of_data: list) -> dict:
@@ -120,30 +126,35 @@ class Creater:
     def _make_correct_list_of_work(self, list_of_work_timestamp, dict_of_breaks):
 
         correct_list_of_work = []
-        for i in list_of_work_timestamp:
+        for work_time in list_of_work_timestamp:
             flagik = True
-            for j in dict_of_breaks:
-                if dict_of_breaks[j][1]:
-                    if i > j and i < dict_of_breaks[j][1]:
+            for start_break in dict_of_breaks:
+                if dict_of_breaks[start_break][1]:
+                    if work_time > start_break and work_time < dict_of_breaks[start_break][1]:
                         flagik = False
+                        
                 else:
-                    if i > j:
+                    if work_time > start_break:
                         flagik = False
             if flagik:
-                correct_list_of_work.append(i)
+                correct_list_of_work.append(work_time)
+
+
         return correct_list_of_work
 
     def _final_dict_without_id(self, full_dict: dict, now_date_end):
         counter = 1
         final_dict = {}
         for i in full_dict.keys():
+
             if not (full_dict[i][0] == 'work'):
+
                 if full_dict[i][1]:
                     final_dict[i-datetime.timedelta(seconds=1)
                                ] = (full_dict[i][0], counter)
                     final_dict[i] = (full_dict[i][0], -100)
                     final_dict[full_dict[i][1] -
-                               datetime.timedelta(seconds=1)] = (full_dict[i][0], -100)
+                                datetime.timedelta(seconds=1)] = (full_dict[i][0], -100)
                     final_dict[full_dict[i][1] +
                                datetime.timedelta(seconds=1)] = (full_dict[i][0], counter)
                 else:
@@ -153,7 +164,7 @@ class Creater:
                     final_dict[now_date_end] = (full_dict[i][0], -100)
             else:
                 final_dict[i] = (full_dict[i][0], full_dict[i][1])
-                counter += 1
+                counter = full_dict[i][1]
         # Окончательная сортировка данных по возрастанию временных штампов
         final_dict = dict(sorted(final_dict.items()))
         return final_dict
