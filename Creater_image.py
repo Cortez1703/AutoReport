@@ -3,7 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as dates
 from matplotlib.backends.backend_pdf import PdfPages
-import seaborn as sns
 from pylab import *
 
 # Local imports
@@ -97,20 +96,25 @@ class Creater_image(Creater):
 
         for i in dict_grab.keys():
             dict_grab[i].append(dataframe['dataframes'][str(i)][6:])
-
+        list_of_KPD = [f'{round((i[1]/i[0])*100,2)}%' for i in dict_grab.values()]
+        print(list_of_KPD)
         list_for_graphs_y1 = [i[0] for i in dict_grab.values()]
         list_for_graphs_y2 = [i[1] for i in dict_grab.values()]
         x_level = np.arange(len(list_for_graphs_y1))
         list_for_graphs_x = [i[2] for i in dict_grab.values()]
 
-        ax.bar(x_level, list_for_graphs_y1, width=0.5, linewidth=2,
+        grabs=ax.bar(x_level, list_for_graphs_y1, width=0.5, linewidth=2,
                yerr=2, label='Количество попыток захвата')
         ax.bar(x_level, list_for_graphs_y2, width=0.5, linewidth=2,
                yerr=2, label='Количество успешных захватов')
+        for grab,text in zip(grabs,list_of_KPD):
+            yval = grab.get_height()
+            plt.text(grab.get_x() + grab.get_width() / 2, yval + 0.5, text, ha='center', va='bottom')
         ax.legend(loc=2)
         ax.set_xticks(x_level)
         ax.set_xticklabels(list_for_graphs_x, rotation=20, ha='right')
         ax.grid()
+        plt.show()
         x_label, y_label = self.make_axis(
             self.get_current_time("grab_attempt", "attempt_timestamp"))
         x_label_2, y_label_2 = self.make_axis(self.get_current_time(
@@ -129,8 +133,8 @@ class Creater_image(Creater):
 
                 timedelta = data_of_breaks[i][1]-i
 
-                text += f'{data_of_breaks[i][0]}, время ремонта:{timedelta.days*8 + timedelta.seconds//3600}ч,{
-                    (timedelta.seconds % 3600)//60}м,{(timedelta.seconds % 3600) % 60}с\n'
+                text += f'''{data_of_breaks[i][0]}, время ремонта:{timedelta.days*8 + timedelta.seconds//3600}ч,{
+                    (timedelta.seconds % 3600)//60}м,{(timedelta.seconds % 3600) % 60}с\n'''
             else:
                 text += f'{data_of_breaks[i][0]}, ремонт не закончен\n'
         # Отрисовка самих графиков
@@ -320,7 +324,7 @@ class Creater_image(Creater):
         self.pdf2.close()
 if __name__ == '__main__':
     testclass = Creater_image(cursor, connection, Executer)
-    testclass.Save_PDF_images_odometr_gisto()
+    testclass.Save_PDF_images_gisto()
 
 
 
