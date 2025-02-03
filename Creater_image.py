@@ -78,6 +78,7 @@ class Creater_image(Creater):
         dict_sorted = {}
         list_of_category_grab, list_of_category_sorted = self.Executer.data_of_sorted(
             self.now_date_start, self.now_date_end)
+
         # Добавление количества включений той или иной категории
         for i in set(list_of_category_grab):
             dict_grab[i] = list_of_category_grab.count(i)
@@ -210,37 +211,51 @@ class Creater_image(Creater):
         for i in np.arange(9, 20):
             y_full_sum = 0
             y_succes_sum = 0
-            for k in range(0, 59, time_step):
+            for k in range(0, 60, time_step):
                 x_full.append((i+(k/60)))
                 x_succec.append(i+(k/60))
                 y_succes_sum = 0
                 y_full_sum = 0
                 for j in full_worktime:
+                    if k==59:
+                        if j > datetime.datetime.strptime(self.now_date_gisto+f"{i}:{k}:00",
+                                                        "%Y-%m-%d %H:%M:%S") and j < datetime.datetime.strptime(self.now_date_gisto+f"{i}:{k}:59",
+                                                                                                                "%Y-%m-%d %H:%M:%S"):
 
-                    if j > datetime.datetime.strptime(self.now_date_gisto+f"{i}:{k}:00",
-                                                      "%Y-%m-%d %H:%M:%S") and j < datetime.datetime.strptime(self.now_date_gisto+f"{i}:{k+time_step}:00",
-                                                                                                              "%Y-%m-%d %H:%M:%S"):
+                            y_full_sum += 1
+                    else:
+                        if j >= datetime.datetime.strptime(self.now_date_gisto+f"{i}:{k}:00",
+                                                        "%Y-%m-%d %H:%M:%S") and j <= datetime.datetime.strptime(self.now_date_gisto+f"{i}:{k+time_step}:00",
+                                                                                                                "%Y-%m-%d %H:%M:%S"):
 
-                        y_full_sum += 1
+                            y_full_sum += 1
 
                 for j in second_worktime:
 
-                    if j > datetime.datetime.strptime(self.now_date_gisto+f"{i}:{k}:00",
-                                                      "%Y-%m-%d %H:%M:%S") and j < datetime.datetime.strptime(self.now_date_gisto+f"{i}:{k+time_step}:00",
+                    if k==59:
+
+                        if j > datetime.datetime.strptime(self.now_date_gisto+f"{i}:{k}:00",
+                                                      "%Y-%m-%d %H:%M:%S") and j < datetime.datetime.strptime(self.now_date_gisto+f"{i}:{k}:59",
                                                                                                               "%Y-%m-%d %H:%M:%S"):
-                        y_succes_sum += 1
+                            y_succes_sum += 1
+                    else:
+                        if j >= datetime.datetime.strptime(self.now_date_gisto+f"{i}:{k}:00",
+                                                      "%Y-%m-%d %H:%M:%S") and j <= datetime.datetime.strptime(self.now_date_gisto+f"{i}:{k+time_step}:00",
+                                                                                                              "%Y-%m-%d %H:%M:%S"):
+                            y_succes_sum += 1
+
                 y_full.append(y_full_sum)
                 y_succel.append(y_succes_sum)
         plt.rcParams["figure.figsize"] = (25, 15)
         plt.step(x_full, y_full, label='Общее количество попыток')
         plt.step(x_succec, y_succel, label='Количество успешных попыток')
         while 0 in y_full:
-            y_full.remove(0)
+             y_full.remove(0)
         if len(x_full) and len(y_full):
             plt.step([x_full[0], x_full[-1]], [mean(y_full), mean(y_full)],
                      '--', label='Средняя скорость попыток захвата', color='b')
             try:
-                plt.text(x_full[0], (mean(y_full)//10)*10 + 15,
+                plt.text(x_full[0], (mean(y_full)//10)*10 + 2,
                          f'{round(mean(y_full)*60, 2)} - попыток в час', fontsize=20)
             except Exception as e:
                 print(e)
@@ -250,7 +265,7 @@ class Creater_image(Creater):
             plt.step([x_succec[0], x_succec[-1]], [mean(y_succel), mean(y_succel)],
                      '--', label='Средняя скорость успешных попыток захвата', color='orange')
             try:
-                plt.text(x_succec[0], (mean(y_succel)//10)*10 + 5,
+                plt.text(x_succec[0], (mean(y_succel)//10)*10 + 2,
                          f'{round(mean(y_succel)*60, 2)} - успешных в час', fontsize=20)
             except Exception as e:
                 print(e)

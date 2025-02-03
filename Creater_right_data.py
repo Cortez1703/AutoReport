@@ -74,20 +74,27 @@ class Creater:
             else:
                 list_of_works_1 = self.Executer.data_for_graphs(
                     name_column, name_table, self.now_date_start, self.now_date_end)
-            
+
             k = 0
             correct_dict_of_work = {}
 
             # Создание словаря "рабочих" значений
             sublist = self._make_correct_list_of_work(list_of_works_1, dict_of_breaks_1)
+
             for i in sublist:
-                correct_dict_of_work[i] = ('work', k, 0)
+                if i in correct_dict_of_work:
+                    if k <1000:
+                        correct_dict_of_work[i+datetime.timedelta(microseconds=k)] = ('work', k, 0)
+                    else:
+                        correct_dict_of_work[i+datetime.timedelta(microseconds=k-999)] = ('work', k, 0)
+                else:
+                    correct_dict_of_work[i] = ('work', k, 0)
                 k += 1
 
             # Объединение двух словарей и сортировка их по возрастанию временных штампов
             full_dict = dict(
                 sorted({**dict_of_breaks_1, **correct_dict_of_work}.items()))
-
+            
             final_dict = self._final_dict_without_id(
                 full_dict, self.now_date_end)
 

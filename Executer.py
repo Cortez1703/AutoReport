@@ -57,6 +57,7 @@ class Executer:
             # list_of_data = [datetime.datetime.strftime(i, "%Y-%m-%d %H:%M:%S") for i in listik]
             first_timestamp = [str(i[0].time())[0:-7]
                                for i in self.cur.fetchall()]
+            print(len(first_timestamp))
             first_timestamp = [str(self.now_date)+' ' +
                                i for i in first_timestamp]
             list_of_data = [datetime.datetime.strptime(
@@ -84,7 +85,7 @@ class Executer:
         if correct_timestamp_dict_2:
             return correct_timestamp_dict_2
         else:
-            return 
+            return {}
 
     def data_of_sorted(self, now_date_start, now_date_end):
         """
