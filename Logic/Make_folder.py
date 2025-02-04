@@ -30,5 +30,3 @@ def make_folder(level: bool = False):
         else:
             print('pizdec')
 
-
-make_folder()

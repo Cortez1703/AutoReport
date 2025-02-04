@@ -1,4 +1,4 @@
-from DB_connection import make_connection
+from Logic.DB_connection import make_connection
 
 conn,cur = make_connection()
 def get_breaks(cursor):
