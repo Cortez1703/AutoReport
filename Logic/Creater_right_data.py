@@ -8,15 +8,16 @@ con,cur=make_connection()
 
 class Creater():
 
-    def __init__(self, cur, con):
+    def __init__(self, cur, con,deltaDays=0):
         self.Executer = Executer(cur,con)
-        self.now_date_start = datetime.datetime.combine(datetime.datetime.now().date(), datetime.time(9, 0, 0))
-        self.now_date_end = datetime.datetime.combine(datetime.datetime.now().date(), datetime.time(21, 0, 0))
+        self.now_date_start = datetime.datetime.combine(datetime.datetime.now().date()-datetime.timedelta(days=deltaDays), datetime.time(9, 0, 0))
+        self.now_date_end = datetime.datetime.combine(datetime.datetime.now().date()-datetime.timedelta(days=deltaDays), datetime.time(21, 0, 0))
 
     def make_right_odometr(self,data):
         """
         Выдает данные для построения распределения Гаусса/пройденного расстояния
         """
+        end_list = []
         match data:
             case int():
                 return data

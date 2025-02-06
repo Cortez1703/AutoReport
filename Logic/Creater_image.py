@@ -19,7 +19,6 @@ import yaml
 import time
 # const
 
-DAYS = 0
 connection, cursor = make_connection()
 
 
@@ -29,11 +28,11 @@ class Creater_image(Creater):
         Конструктор для создания и сохранения графиков в пдф
     """
 
-    def __init__(self, cur, con, Executer, DAYS=5):
-        super().__init__(cur, con)
-        self.now_date = datetime.date.today()
+    def __init__(self, cur, con, Executer, deltaDays):
+        super().__init__(cur, con,deltaDays)
+        self.now_date = datetime.date.today()-datetime.timedelta(days=deltaDays)
         self.Executer = Executer(cur, con)
-        self.DAYS = DAYS
+        self.deltaDays = deltaDays
         self.pdf = PdfPages(
             fr"{os.getcwd()}/Reports/{self.now_date}/Графики_по_тестам_{self.now_date}.pdf")
         self.pdf2 = PdfPages(
@@ -91,7 +90,8 @@ class Creater_image(Creater):
             dataframe = yaml.load(f, yaml.FullLoader)
 
         for category in grab_bar.keys():
-            grab_bar[category].append(dataframe['dataframes'][str(category)][6:])
+            grab_bar[category].append(
+                dataframe['dataframes'][str(category)][6:])
 
         # Списки для самих столбчатых графиков
         list_for_graphs_y1 = [i[0] for i in grab_bar.values()]
@@ -163,7 +163,7 @@ class Creater_image(Creater):
                     fontsize=10,
                     bbox={'facecolor': 'green',
                           'alpha': 0.6, 'pad': 2})
-        if y_label:
+        if len(y_label):
             ax.set_title(f'''{title}\nВсего захватов {y_label[-1]},
                             успешных захватов {y_label_2[-1]}.КПД {(y_label_2[-1] / (len(y_label)+1)) * 100:.2f}%''')
 
@@ -199,21 +199,23 @@ class Creater_image(Creater):
             time.sleep(0.1)
 
         # Создание и сохранение общего графика + столбчатого по категориям
+        if flag:
+            fig = plt.figure(figsize=(25, 20))
+            # Общий график за день
+            ax = fig.add_subplot(2, 1, 1)
+            self._Save_PDF_big_graph(ax)
 
-        fig = plt.figure(figsize=(25, 20))
-        # Общий график за день
-        ax = fig.add_subplot(2, 1, 1)
-        self._Save_PDF_big_graph(ax)
+            # Столбчатый график
+            ax = fig.add_subplot(2, 1, 2)
+            self._Save_PDF_bar(ax)
 
-        # Столбчатый график
-        ax = fig.add_subplot(2, 1, 2)
-        self._Save_PDF_bar(ax)
+            self.pdf.savefig(fig)
+            # Сохранение общего графика за сегодняшнюю дату
 
-        self.pdf.savefig(fig)
-        # Сохранение общего графика за сегодняшнюю дату
-
-        self.pdf.close()
-        return bool(flag)
+            self.pdf.close()
+            return bool(flag)
+        else:
+            return None
 
     def _Save_PDF_speed_graph(self, time_step: int = 1):
         plt.close('all')
@@ -236,7 +238,7 @@ class Creater_image(Creater):
                 Counter_grab = 0
                 Counter_success = 0
                 start = datetime.datetime.combine(datetime.datetime.now(
-                ).date()-datetime.timedelta(self.DAYS), datetime.time(hour, minute, 0))
+                ).date()-datetime.timedelta(self.deltaDays), datetime.time(hour, minute, 0))
 
                 x_full.append((hour+(minute/60)))
                 x_succec.append(hour+(minute/60))
@@ -247,14 +249,14 @@ class Creater_image(Creater):
 
                     if minute == 59:
                         end = datetime.datetime.combine(datetime.datetime.now().date(
-                        )-datetime.timedelta(self.DAYS), datetime.time(hour, minute, 59))
+                        )-datetime.timedelta(self.deltaDays), datetime.time(hour, minute, 59))
                         if elem_time > start and elem_time < end:
                             Counter_grab += 1
 
                             y_full_sum += 1
                     else:
                         end = datetime.datetime.combine(datetime.datetime.now().date(
-                        )-datetime.timedelta(self.DAYS), datetime.time(hour, minute+time_step, 0))
+                        )-datetime.timedelta(self.deltaDays), datetime.time(hour, minute+time_step, 0))
                         if elem_time > start and elem_time < end:
                             Counter_grab += 1
                             y_full_sum += 1
@@ -263,13 +265,13 @@ class Creater_image(Creater):
 
                     if minute == 59:
                         end = datetime.datetime.combine(datetime.datetime.now().date(
-                        )-datetime.timedelta(self.DAYS), datetime.time(hour, minute, 59))
+                        )-datetime.timedelta(self.deltaDays), datetime.time(hour, minute, 59))
                         if elem_time > start and elem_time < end:
                             Counter_success += 1
                             y_succes_sum += 1
                     else:
                         end = datetime.datetime.combine(datetime.datetime.now().date(
-                        )-datetime.timedelta(self.DAYS), datetime.time(hour, minute+time_step, 0))
+                        )-datetime.timedelta(self.deltaDays), datetime.time(hour, minute+time_step, 0))
                         if elem_time > start and elem_time < end:
                             Counter_success += 1
                             y_succes_sum += 1
@@ -291,7 +293,10 @@ class Creater_image(Creater):
             wave_success_median_y.append(sum(wave_list)/len(wave_list))
         plt.plot(x_full, wave_grab_median_y, color='black')
         plt.plot(x_succec, wave_success_median_y, color='red')
-
+        while 0 in y_succel:
+            y_succel.remove(0)
+        print(y_succel)
+        print(60*sum(y_succel)/len(y_succel))
         plt.legend()
         plt.title(f"""Общее количество попыток {sum(y_full)}, количество успешных попыток {sum(y_succel)}.
     КПД {(sum(y_succel) / (1+sum(y_full))) * 100:.2f}%""")
@@ -300,10 +305,10 @@ class Creater_image(Creater):
         plt.ylabel("V,предметы/минута")
         if y_full:
 
-            plt.xlim(min(x_succec[0], x_full[0]), max(x_full[-1], x_succec[-1]))
-            plt.ylim(0, max(y_full))
+            plt.xlim(min(x_succec[0], x_full[0]),
+                     max(x_full[-1], x_succec[-1]))
+            plt.ylim(0, max(y_full)+10)
             self.pdf2.savefig()
-
 
     def _Save_PDF_images_odometr_gisto(self):
         x_label = [0 for i in range(6)]
@@ -360,14 +365,12 @@ class Creater_image(Creater):
 
         self.pdf2.savefig()
         self.pdf2.close()
-    
+
     def Save_Full(self):
         result = self._Save_PDF_full_graph()
-        print(result)
         if result:
             self._Save_PDF_speed_graph()
             self._Save_PDF_images_odometr_gisto()
             return result
         else:
             return None
-

@@ -12,12 +12,12 @@ class Executer:
         self.con = con
         self.now_date = datetime.date.today()
 
-    def axis_standart_graph(self, 
-                            name_table: str, 
+    def axis_standart_graph(self,
+                            name_table: str,
                             name_column: str,
-                            date_start: str, 
+                            date_start: str,
                             date_end: str,
-                            ID: int | None = None, 
+                            ID: int | None = None,
                             success: bool | None = None) -> np.array:
         """
         Формирование осей х,y для обычного графика
@@ -74,10 +74,9 @@ class Executer:
 
         # Парсинг значений с поломками
         self.cur.execute(f"""SELECT name_break,date_of_create_break,date_of_repair_break FROM breaks
-                    WHERE date_of_create_break<'{now_date_end}' 
+                    WHERE date_of_create_break<'{now_date_end}'
                     AND (date_of_repair_break>'{now_date_start}' OR date_of_repair_break IS NULL)""")
         return [i for i in self.cur.fetchall()]
-
 
     def axis_bar_graph(self, now_date_start, now_date_end):
         """
@@ -88,32 +87,32 @@ class Executer:
         """
 
         self.cur.execute(f"""SELECT category_id FROM grab_attempt
-                        WHERE attempt_timestamp>'{now_date_start}' 
+                        WHERE attempt_timestamp>'{now_date_start}'
                         AND attempt_timestamp<'{now_date_end}'""")
-        
-        #Распаковываем запрос из SQL.
+
+        # Распаковываем запрос из SQL.
         list_of_category_grab = [i[0] for i in self.cur.fetchall()]
 
-        #Формируем словарь фракция:сколько раз встречалась
+        # Формируем словарь фракция:сколько раз встречалась
         dict_grab = {i: [list_of_category_grab.count(
             i)] for i in set(list_of_category_grab)}
-        
+
         self.cur.execute(f"""SELECT category_id FROM grab_attempt
-                        WHERE attempt_timestamp>'{now_date_start}' 
+                        WHERE attempt_timestamp>'{now_date_start}'
                         AND attempt_timestamp<'{now_date_end}' and success={True}""")
-        
-        #Распаковываем запрос из SQL.
+
+        # Распаковываем запрос из SQL.
         list_of_category_sorted = [i[0] for i in self.cur.fetchall()]
 
-        #Формируем словарь фракция:сколько раз встречалась
+        # Формируем словарь фракция:сколько раз встречалась
         dict_sorted = {i: [list_of_category_sorted.count(
             i)] for i in set(list_of_category_sorted)}
-        
+
         for i in dict_grab:
             if i in dict_sorted:
                 pass
             else:
-                dict_sorted[i]=[0]
+                dict_sorted[i] = [0]
 
         return dict_grab, dict_sorted
 
@@ -122,11 +121,11 @@ class Executer:
         Выдает список тестов(id) за сегодняшний день
         """
         self.cur.execute(
-            f"""SELECT test_id FROM grab_attempt 
-            WHERE attempt_timestamp>'{now_date_start}' 
+            f"""SELECT test_id FROM grab_attempt
+            WHERE attempt_timestamp>'{now_date_start}'
             AND attempt_timestamp<'{now_date_end}'""")
-        
-        #Условный костыль,т.к. выдает почему-то иногда пустой кортеж
+
+        # Условный костыль,т.к. выдает почему-то иногда пустой кортеж
         test_id = [i[0]
                    for i in set(self.cur.fetchall()) if bool(i[0]) == True]
         return test_id
@@ -162,4 +161,3 @@ class Executer:
                     data = (data[0][2:-1].split(' '))
                     output.append(data)
                 return output
-

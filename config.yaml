@@ -4,7 +4,7 @@ user: ram
 password: fuckingdatabase
 host: 192.168.6.157
 port: 5440
-id_my : 872965519
+own_id : 872965519
 group_id : -1002259594246
 api_token_bot : 7725614078:AAEUBv9cxtTh2ai67Zccm14E3V3M_qs2XfA
 dataframes : 
