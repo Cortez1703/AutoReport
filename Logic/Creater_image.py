@@ -164,8 +164,9 @@ class Creater_image(Creater):
                     bbox={'facecolor': 'green',
                           'alpha': 0.6, 'pad': 2})
         if len(y_label):
+
             ax.set_title(f'''{title}\nВсего захватов {y_label[-1]},
-                            успешных захватов {y_label_2[-1]}.КПД {(y_label_2[-1] / (len(y_label)+1)) * 100:.2f}%''')
+                            успешных захватов {y_label_2[-1]}.КПД {(y_label_2[-1] / (y_label[-1]+1)) * 100:.2f}%''')
 
             ax.title.set_fontsize(10)
             ax.legend()
@@ -295,8 +296,7 @@ class Creater_image(Creater):
         plt.plot(x_succec, wave_success_median_y, color='red')
         while 0 in y_succel:
             y_succel.remove(0)
-        print(y_succel)
-        print(60*sum(y_succel)/len(y_succel))
+
         plt.legend()
         plt.title(f"""Общее количество попыток {sum(y_full)}, количество успешных попыток {sum(y_succel)}.
     КПД {(sum(y_succel) / (1+sum(y_full))) * 100:.2f}%""")

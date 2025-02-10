@@ -61,7 +61,16 @@ class Creater():
                             xArrayFinal.append(xArray[Counter])
                             yArrayFinal.append(Counter)
                             Counter+=1
+
                         if breakTime[2]:
+                            if xArray[-1]<breakTime[2]:
+                                xArrayFinal.append(breakTime[1])
+                                yArrayFinal.append(-100)
+                                xArrayFinal.append(breakTime[2])
+                                yArrayFinal.append(-100)
+                                xArrayFinal.append(breakTime[2]+datetime.timedelta(seconds=1))
+                                yArrayFinal.append(yArray[-1])
+                                return xArrayFinal,yArrayFinal
                             while xArray[Counter]<breakTime[2]:
                                 Counter+=1
                             xArrayFinal.append(breakTime[1])
