@@ -30,7 +30,7 @@ class Creater_image(Creater):
     """
 
     def __init__(self, cur, con, Executer, deltaDays):
-        super().__init__(cur, con,deltaDays)
+        super().__init__(cur, con, deltaDays)
         self.now_date = datetime.date.today()-datetime.timedelta(days=deltaDays)
         self.Executer = Executer(cur, con)
         self.deltaDays = deltaDays
@@ -318,7 +318,7 @@ class Creater_image(Creater):
         return len(y_succel)
 
     def _Save_PDF_images_odometr_gisto(self):
-        time_work=self._Save_PDF_speed_graph()
+        time_work = self._Save_PDF_speed_graph()
         x_label = [0 for i in range(6)]
         y_label = [0 for i in range(14)]
         z_label = [0 for i in range(6)]
@@ -345,13 +345,13 @@ class Creater_image(Creater):
                 y_label = [x+y for x, y, in zip(y_label, y_distribution)]
                 z_label = [x+y for x, y, in zip(z_label, z_distribution)]
                 d += distance
-
+        # return self.Executer.get_data_odometr(test_id, "x_distribution"), self.Executer.get_data_odometr(test_id, "y_distribution"), self.Executer.get_data_odometr(test_id, "z_distribution")
         x_level = np.arange(len(x_area))
         y_level = np.arange(len(y_area))
         z_level = np.arange(len(z_area))
         fig = plt.figure(figsize=(25, 25))
-        fig.suptitle(f"""Распределение нахождения робота по областям. Время в движении - {sum((x_label))//60}ч {sum((x_label))%60:.1f}мин 
-                     Общее время работы - {time_work//60}ч {(time_work%60)}мин  
+        fig.suptitle(f"""Распределение нахождения робота по областям. Время в движении - {sum((x_label))//60}ч {sum((x_label)) % 60:.1f}мин 
+                     Общее время работы - {time_work//60}ч {(time_work % 60)}мин  
                      Пройденная дистанция - {d} м""")
         ax = fig.add_subplot(1, 3, 1)
         ax.grid(True)
@@ -383,3 +383,9 @@ class Creater_image(Creater):
             return result
         else:
             return None
+
+
+# conn, cur = make_connection()
+# testclass = Creater_image(cur, conn, Executer, 0)
+
+# a, b, c = testclass._Save_PDF_images_odometr_gisto()
