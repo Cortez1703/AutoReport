@@ -24,10 +24,10 @@ with open('config.yaml') as f:
 
 # Константы id бота и канала
 bot = Bot(token=dataframe['api_token_bot'])
-output_chat_id = dataframe['own_id']
+output_chat_id = dataframe['group_id']
 
 if len(args) > 1:
-    my_id = int(args[1])
+    output_chat_id = int(args[1])
     message_id = int(args[2])
 
 
