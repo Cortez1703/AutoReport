@@ -1,6 +1,7 @@
 # Matplotlib/NumPy imports
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.text import Text
 import matplotlib.dates as dates
 from matplotlib.backends.backend_pdf import PdfPages
 from pylab import *
@@ -125,6 +126,7 @@ class Creater_image(Creater):
         ax.set_xticks(x_level)
         ax.set_xticklabels(category_names, rotation=20, ha='right')
         ax.grid()
+        return ax
 
     def _Save_PDF_big_graph(self, ax):
         """Конструктор графика за весь день"""
@@ -145,36 +147,39 @@ class Creater_image(Creater):
         data_of_breaks = self.Executer.data_of_breaks(
             self.now_date_start, self.now_date_end)
 
-        text = ''
+        break_message = ''
 
         for breakData in data_of_breaks:
-            if breakData[1]:
+            if breakData[2]:
 
-                timedelta = breakData[1]-breakData[2]
+                timedelta = breakData[2]-breakData[1]
 
-                text += f'''{breakData[0]}, время ремонта:{timedelta.days*8 + timedelta.seconds//3600}ч,{
+                break_message += f'''{breakData[0]}, время ремонта:{timedelta.days*8 + timedelta.seconds//3600}ч,{
                     (timedelta.seconds % 3600)//60}м,{(timedelta.seconds % 3600) % 60}с\n'''
             else:
-                text += f'{breakData[0]}, ремонт не закончен\n'
+                break_message += f'{breakData[0]}, ремонт не закончен\n'
 
-        if text:
-            text = f'Поломки за {self.now_date}\n\n'+text
-            ax.text(self.now_date_start, y_label[int(len(y_label)*0.8)], f'{text}', style='italic',
-                    fontsize=10,
-                    bbox={'facecolor': 'green',
-                          'alpha': 0.6, 'pad': 2})
+        break_message = f'Поломки за {self.now_date}\n'+break_message
+
         if len(y_label):
 
             ax.set_title(f'''{title}\nВсего захватов {y_label[-1]},
                             успешных захватов {y_label_2[-1]}.КПД {(y_label_2[-1] / (y_label[-1]+1)) * 100:.2f}%''')
 
-            ax.title.set_fontsize(10)
-            ax.legend()
+            # ax.title.set_fontsize(10)
+            # ax.legend()
             ax.grid(True)
             ax.xaxis.set_major_formatter(fmt)
             if len(x_label) > 0 and len(x_label_2) > 0:
                 ax.set_xlim(min(x_label[0], x_label_2[0]),
                             max(x_label[-1], x_label_2[-1]))
+        ax._add_text(Text(text=break_message))
+        # ax.text(self.now_date_start,10, f'{text}',
+        #         fontsize=20)
+        #         # ,
+        #         # bbox={'facecolor': 'green',
+        #         #         'alpha': 0.6, 'pad': 2})
+        return ax
 
     def _Save_PDF_full_graph(self, flag: int = 0):
         """
@@ -198,6 +203,7 @@ class Creater_image(Creater):
                 x_label, x_label_2, y_label, y_label_2, title))
 
             time.sleep(0.1)
+        plt.close('all')
 
         # Создание и сохранение общего графика + столбчатого по категориям
         if flag:
@@ -309,8 +315,10 @@ class Creater_image(Creater):
                      max(x_full[-1], x_succec[-1]))
             plt.ylim(0, max(y_full)+10)
             self.pdf2.savefig()
+        return len(y_succel)
 
     def _Save_PDF_images_odometr_gisto(self):
+        time_work=self._Save_PDF_speed_graph()
         x_label = [0 for i in range(6)]
         y_label = [0 for i in range(14)]
         z_label = [0 for i in range(6)]
@@ -342,8 +350,9 @@ class Creater_image(Creater):
         y_level = np.arange(len(y_area))
         z_level = np.arange(len(z_area))
         fig = plt.figure(figsize=(25, 25))
-        fig.suptitle(f"""Распределение нахождения робота по областям. Общее время работы - {
-                     sum((x_label)):.2f} мин. \n Пройденная дистанция - {d} м""")
+        fig.suptitle(f"""Распределение нахождения робота по областям. Время в движении - {sum((x_label))//60}ч {sum((x_label))%60:.1f}мин 
+                     Общее время работы - {time_work//60}ч {(time_work%60)}мин  
+                     Пройденная дистанция - {d} м""")
         ax = fig.add_subplot(1, 3, 1)
         ax.grid(True)
         ax.bar(x_level, x_label)
@@ -369,7 +378,7 @@ class Creater_image(Creater):
     def Save_Full(self):
         result = self._Save_PDF_full_graph()
         if result:
-            self._Save_PDF_speed_graph()
+            # self._Save_PDF_speed_graph()
             self._Save_PDF_images_odometr_gisto()
             return result
         else:
